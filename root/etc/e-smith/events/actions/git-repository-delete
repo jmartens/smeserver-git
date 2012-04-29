@@ -1,0 +1,64 @@
+#!/usr/bin/perl -w
+#----------------------------------------------------------------------
+# vim: ft=perl ts=2 sw=2 et:
+#----------------------------------------------------------------------
+#
+# Copyright (C) 2012 - Marco Hess <marco.hess@through-ip.com>
+#
+# This file is part of the "Git Repositories" panel in the
+# SME Server server-manager panel to configure git repositories.
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
+#----------------------------------------------------------------------
+# $Id: git.pm 1 2012-04-23 11:25:58Z marco $
+#----------------------------------------------------------------------
+
+#------------------------------------------------------------
+# Delete the Git repository.
+#------------------------------------------------------------
+
+use strict;
+use Errno;
+use File::Path;
+use esmith::GitDB;
+
+my $git_db = esmith::GitDB->open_ro();
+
+my $event                 = $ARGV [0];
+my $gitRepositoryToDelete = $ARGV [1];
+
+die "event argument missing" 
+  unless defined ($event);
+
+die "gitRepositoryToDelete argument missing" 
+  unless defined ($gitRepositoryToDelete);
+
+die "Invalid event: \"$event\". Expecting \"git-repository-delete\"\n"
+  unless (($event) eq 'git-repository-delete');
+
+my $repo = $git_db->get($gitRepositoryToDelete) || undef;
+unless ( defined $repo && $repo->prop('type') eq "repository-deleted" )
+{
+  warn "Can't find \"$gitRepositoryToDelete\" in the Git repository database.\n";
+  exit (0);
+}
+
+my $dir = "/home/e-smith/files/git/$gitRepositoryToDelete";
+
+exit 0 unless ( -d $dir );
+
+rmtree( $dir ) || die "Couldn't remove Git repository in $dir\n";
+
+exit (0);

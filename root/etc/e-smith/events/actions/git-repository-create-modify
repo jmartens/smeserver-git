@@ -1,0 +1,100 @@
+#!/usr/bin/perl -w
+#----------------------------------------------------------------------
+# vim: ft=perl ts=2 sw=2 et:
+#----------------------------------------------------------------------
+#
+# Copyright (C) 2012 - Marco Hess <marco.hess@through-ip.com>
+#
+# This file is part of the "Git Repositories" panel in the
+# SME Server server-manager panel to configure git repositories.
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
+#----------------------------------------------------------------------
+# $Id: git-repository-create-modify 1 2012-04-23 11:25:58Z marco $
+#----------------------------------------------------------------------
+
+package esmith;
+
+use strict;
+use Errno;
+use File::Find;
+use esmith::util;
+use esmith::templates;
+use esmith::GitDB;
+
+$ENV{'PATH'} = "/bin";
+
+my $event = $ARGV [0];
+my $gitRepositoryName = $ARGV [1];
+
+die "gitRepositoryName argument missing" unless defined ($gitRepositoryName);
+
+my $git_db = esmith::GitDB->open_ro();
+my $repository = $git_db->get($gitRepositoryName) or 
+	die "Couldn't find $gitRepositoryName record in git database\n";
+
+die "'$gitRepositoryName' is not an Git repository; git-repository-modify event failed.\n"
+  unless ($repository->prop('type') eq 'repository');
+
+my $description = $repository->prop('Description');  
+  
+if ($event eq 'git-repository-create')
+{
+  #------------------------------------------------------------
+  # Create a bare git repository
+  # We add the .git extension to the repository name to indicate 
+  # is a bare repository.
+  #------------------------------------------------------------
+
+  system("/usr/bin/git", "init", "--bare", "/home/e-smith/files/git/$gitRepositoryName.git") == 0
+	  or die "Error creating the initial bare git respository structure for /home/e-smith/files/git/$gitRepositoryName.git";
+
+  # Init the Git description 
+  open(my $file, '>', "/home/e-smith/files/git/$gitRepositoryName.git/description");
+  print $file $repository->prop('Description') . "\n"; 
+  
+  # Enable 'post-update' hook
+  system("/bin/cp", "-p", "/home/e-smith/files/git/$gitRepositoryName.git/hooks/post-update.sample", "/home/e-smith/files/git/$gitRepositoryName.git/hooks/post-update") == 0
+	  or die "Error enabling 'post-update' hook on respository /home/e-smith/files/git/$gitRepositoryName.git";
+}
+elsif ($event eq 'git-repository-modify')
+{
+  #------------------------------------------------------------
+  # Modify the Git repository
+  #------------------------------------------------------------
+  
+  # Update the Git description to match the setting in the server-manager interface
+  open(my $file, '>', "/home/e-smith/files/git/$gitRepositoryName.git/description");
+  print $file $repository->prop('Description') . "\n"; 
+  
+  # Run git-update-server-info
+  chdir "/home/e-smith/files/git/$gitRepositoryName.git"
+    or die "Could not chdir to /home/e-smith/files/git/$gitRepositoryName.git";
+  system("/usr/libexec/git-core/git-update-server-info") == 0
+	  or die "Error running 'update-server-info' on respository /home/e-smith/files/git/$gitRepositoryName.git";
+}
+
+#------------------------------------------------------------
+# Default for both create and modify is to fix the ownership
+# to allow the webserver access to the repository
+#------------------------------------------------------------
+
+chdir "/home/e-smith/files/git/$gitRepositoryName.git"
+  or die "Could not chdir to /home/e-smith/files/git/$gitRepositoryName.git";
+
+system("/bin/chown", "-R", "www:www", "/home/e-smith/files/git/$gitRepositoryName.git") == 0
+  or die "Could not change ownership of /home/e-smith/files/git/$gitRepositoryName.git";
+
+chmod 0755, ".";

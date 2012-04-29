@@ -1,0 +1,3 @@
+
+# Use clean URLs
+$feature\{'pathinfo'\}\{'default'\} = [1];

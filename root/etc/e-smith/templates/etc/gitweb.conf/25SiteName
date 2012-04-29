@@ -1,0 +1,6 @@
+{
+ $OUT  = "";
+ $OUT .= "# Site name: default to subdomain.host";
+ $OUT .= "# configured with: config setprop git domain <name>\n";
+ $OUT .= "\$site_name = \"" . $git{'domain'} . "\"\;\n";
+}

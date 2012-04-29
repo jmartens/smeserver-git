@@ -1,0 +1,62 @@
+
+*** User GIT Repositories ***
+/home/e-smith/files/user/marco/home/public_git/repository.git
+
+
+*** Central GIT Repositories ***
+/home/e-smith/files/git/ITFoundation.git
+
+*** Gitweb ***
+/home/e-smith/files/git/gitweb/gitweb.conf
+/home/e-smith/files/git/gitweb/root/ITFoundation.git -> /home/e-smith/files/git/ITFoundation.git
+/home/e-smith/files/git/gitweb/root/\~marco          -> /home/e-smith/files/user/marco/public_git
+
+*** Gitweb.conf ***
+$projectroot = "/home/e-smith/files/git/gitweb/root";
+$git_temp = "/tmp";
+$home_text = "indextext.html";
+$projects_list = $projectroot;
+$stylesheet = "/gitweb.css";
+$logo = "/git-logo.png";
+$favicon = "/git-favicon.png";
+@git_base_url_list = qw(git://git.ithinksw.org http://git.ithinksw.org);
+$site_name = "git.ithinksw.org";
+$home_link_str = "git.ithinksw.org";
+$projects_list_description_width = "200";
+$feature{'pathinfo'}{'default'} = [1];
+
+*** Apache Conf ***
+DocumentRoot /home/e-smith/files/git
+UserDir public_git
+UserDir enabled
+# gitweb
+SetEnv GITWEB_CONFIG /home/e-smith/files/git/gitweb/gitweb.conf
+Alias /gitweb.css /usr/share/gitweb/gitweb.css
+Alias /git-logo.png /usr/share/gitweb/git-logo.png
+Alias /git-favicon.png /usr/share/gitweb/git-favicon.png
+ScriptAlias /gitweb /usr/share/gitweb/gitweb.cgi
+RewriteEngine on
+# redirect userdir listing to gitweb search
+RewriteRule ^/?(~[^/]+)/?$ /?s=$1 [R]
+# rewrite all other paths that aren't git repo internals to gitweb
+RewriteRule ^/$ /gitweb [PT] 
+RewriteRule ^/(.*\.git/(?!/?(HEAD|info|objects|refs)).*)?$ /gitweb%{REQUEST_URI} [L,PT]
+
+
+
+*** RULES ***
+
+GLOBAL REPOSITORIES
+- Read Internet
+- Write Authenticated / HTTPS
+
+PRIVATE REPOSITORIES
+- Read Local Network
+- Read Authenticated HTTPS Internet
+- Write Authenticated / HTTPS
+
+LOCAL REPOSITORIES
+- Read Local Network Only
+- Write Authenticated / HTTPS
+
+

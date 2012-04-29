@@ -1,0 +1,19 @@
+#------------------------------------------------------------
+#             *** DO NOT MODIFY THIS FILE! ***
+#
+# This is the configuration file for GitWeb. 
+#
+# It is updated automatically by the SME Server software. 
+#
+# To modify copy the required template fragment from 
+# /etc/e-smith/templates/etc/gitweb.conf into
+# /etc/e-smith/templates-custom/etc/gitweb.conf and 
+# modify it there. 
+#
+# The use "expand-template /etc/gitweb.conf"  
+#
+# For more information, see http://wiki.contribs.org/Template_Tutorial
+#
+# Copyright (C) 2012 Marco Hess <marco.hess@through-ip.com>
+#------------------------------------------------------------
+

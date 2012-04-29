@@ -1,0 +1,3 @@
+
+# Length of the project description column in the webpage.
+$projects_list_description_width = 200;

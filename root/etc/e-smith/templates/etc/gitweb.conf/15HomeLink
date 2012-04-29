@@ -1,0 +1,5 @@
+{
+ $OUT = "";
+ $OUT .= "# configured with: config setprop git domain <name>\n";
+ $OUT .= "\$home_link_str = \"" . $git{'domain'} . "\"\;\n";
+}

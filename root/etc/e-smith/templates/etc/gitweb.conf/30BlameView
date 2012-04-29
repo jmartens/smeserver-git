@@ -1,0 +1,8 @@
+
+# Enable the 'blame' blob view, showing the last commit that modified
+# each line in the file. This can be very CPU-intensive. Disabled by default
+$feature\{'blame'\}\{'default'\} = [1];
+
+# Allow projects to override the default setting via git config file.
+# Example: gitweb.blame = 0|1;
+$feature\{'blame'\}\{'override'\} = 1;

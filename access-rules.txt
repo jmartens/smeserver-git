@@ -1,0 +1,34 @@
+This document documents the various access rules and how they are supposed to work:
+
+Access Type: global
+===================
+- Publicly available clone and gitweb view from the Internet
+- Authenticated HTTPS access is required for write access
+
+Access Type: private
+====================
+- The local network has normal access
+- Authenticated HTTPS is available from the Internet
+
+Access Type: local
+==================
+- Only the local network has full access
+
+ForceSSL
+========
+- HTTP access is automatically redirected to HTTPS access
+
+Authentication Required
+=======================
+- A user / password is required for any access
+- This also forces HTTPS access
+
+Read Users
+==========
+- Users that have read access to the repository
+- When there are no users selected for read access the access is anonymous
+
+Write Users
+===========
+- Users that have write access to the repository
+- When there are no users selected for write access the access is anonymous?
