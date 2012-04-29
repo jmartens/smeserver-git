@@ -148,37 +148,15 @@
     $OUT .= "            /usr/libexec/git-core/git-http-backend/\$1\n";
     $OUT .= "\n";
 
-#    $OUT .= "  # Serve HTML with gitweb. Use Alias to also allow serving CSS and JS files.\n";
-#    $OUT .= "  Alias  /gitweb          /usr/share/gitweb\n";
-#    $OUT .= "\n";
-
-#    $OUT .= "  # Ensure we can browse the repo with http://git.server.com/repo.git\n";
-#    $OUT .= "  # instead of http://git.server.com/?p=repo.git;a=summary.\n";
-#    $OUT .= "  RewriteEngine on\n";
-#    $OUT .= "  RewriteCond %{REQUEST_FILENAME} !-f\n";
-#    $OUT .= "  RewriteCond %{REQUEST_FILENAME} !-d\n";
-#    $OUT .= "  RewriteRule ^/\$ /gitweb/gitweb.cgi [PT]\n";
-#    $OUT .= "  RewriteRule ^/(.*\\.git/(?!/?(HEAD|info|objects|refs)).*)?\$ /gitweb/gitweb.cgi%{REQUEST_URI} [L,PT]\n\n";
-    
-#    if( $port eq 80 ) {
-#      $OUT .= "  # Force clients from the Internet to use HTTPS\n";
-#      $OUT .= "  RewriteEngine on\n";
-#      $OUT .= "  RewriteCond   %{REMOTE_ADDR} !^10\\.1\\.0\\.[0-9]+\$\n";
-#      $OUT .= "  RewriteCond   %{HTTPS} !=on\n";
-#      $OUT .= "  RewriteRule   .* https://%{SERVER_NAME}%{REQUEST_URI} [R,L]\n\n";
-#    } 
-    
-#    $OUT .= "  <Directory $GitWebRoot>\n";
-#    $OUT .= "    Options ExecCGI FollowSymLinks\n";
-#    $OUT .= "    DirectoryIndex gitweb.cgi\n";
-#    $OUT .= "    AddHandler cgi-script .cgi\n";
-#    $OUT .= "    Order allow,deny\n";
+    $OUT .= "  <Directory $GitRepositoryRoot>\n";
+    $OUT .= "    Options ExecCGI\n";
+#    $OUT .= "    Order   allow,deny\n";
 #    if( $port eq 80 ) {
 #      $OUT .= "    Allow from $gitweb_allow\n";
 #    } else {
-#      $OUT .= "    Allow from All\n";
+      $OUT .= "    Allow from All\n";
 #    }
-#    $OUT .= "  </Directory>\n\n";
+    $OUT .= "  </Directory>\n\n";
 
     $OUT .= "  <Directory /usr/libexec/git-core>\n";
     $OUT .= "    Options ExecCGI Indexes\n";
@@ -189,15 +167,38 @@
       $OUT .= "    Allow from All\n";
 #    }
     $OUT .= "  </Directory>\n\n";
+    
+    $OUT .= "  # Serve HTML with gitweb. Use Alias to allow serving required CSS and JS files.\n";
+    $OUT .= "  Alias  /gitweb          /usr/share/gitweb\n";
+    $OUT .= "\n";
 
-    $OUT .= "  <Directory $GitRepositoryRoot>\n";
-    $OUT .= "    Options ExecCGI\n";
-#    $OUT .= "    Order   allow,deny\n";
+    $OUT .= "  # Ensure we can browse the repo with http://git.server.com/repo.git\n";
+    $OUT .= "  # instead of http://git.server.com/?p=repo.git;a=summary.\n";
+    $OUT .= "  RewriteEngine on\n";
+    $OUT .= "  RewriteCond %{REQUEST_FILENAME} !-f\n";
+    $OUT .= "  RewriteCond %{REQUEST_FILENAME} !-d\n";
+    $OUT .= "  RewriteRule ^/\$ /gitweb/gitweb.cgi [PT]\n";
+    $OUT .= "  RewriteRule ^/(.*\\.git/(?!/?(HEAD|info|objects|refs)).*)?\$ /gitweb/gitweb.cgi%{REQUEST_URI} [L,PT]\n";
+    
 #    if( $port eq 80 ) {
-#      $OUT .= "    Allow from $gitweb_allow\n";
-#    } else {
-      $OUT .= "    Allow from All\n";
-#    }
+#      $OUT .= "  # Force clients from the Internet to use HTTPS\n";
+#      $OUT .= "  RewriteEngine on\n";
+#      $OUT .= "  RewriteCond   %{REMOTE_ADDR} !^10\\.1\\.0\\.[0-9]+\$\n";
+#      $OUT .= "  RewriteCond   %{HTTPS} !=on\n";
+#      $OUT .= "  RewriteRule   .* https://%{SERVER_NAME}%{REQUEST_URI} [R,L]\n\n";
+#    } 
+    
+    $OUT .= "  <Directory $GitWebRoot>\n";
+    $OUT .= "    Options        ExecCGI\n";
+    $OUT .= "    AllowOverride  None\n";
+    $OUT .= "    AddHandler     cgi-script .cgi\n";
+    $OUT .= "    DirectoryIndex gitweb.cgi\n";
+    $OUT .= "    Order          allow,deny\n";
+    if( $port eq 80 ) {
+      $OUT .= "    Allow from     $gitweb_allow\n";
+    } else {
+      $OUT .= "    Allow from     All\n";
+    }
     $OUT .= "  </Directory>\n\n";
 
     my @repositories = $git_db->get_all_by_prop('type' => 'repository');
