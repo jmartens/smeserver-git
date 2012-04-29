@@ -7,3 +7,4 @@ $feature\{'grep'\}\{'default'\} = [1];
 # Allow projects to override the default setting via git config file.
 # Example: gitweb.grep = 0|1;
 $feature\{'grep'\}\{'override'\} = 1;
+

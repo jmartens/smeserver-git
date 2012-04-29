@@ -1,8 +1,8 @@
 {
  $OUT  = "";
  $OUT .= "# Set the list of git base URLs used for URL to where fetch project from, i.e.\n";
- $OUT .= "# the full URL is "$git_base_url/$project". By default this is empty\n";
- $OUT .= "#our @git_base_url_list = qw(git://git.example.com\n";
+ $OUT .= "# the full URL is \"\$git_base_url/\$project\". By default this is empty\n";
+ $OUT .= "#our \@git_base_url_list = qw(git://git.example.com\n";
  $OUT .= "#                            ssh://git.example.com/var/lib/git);\n";
  $OUT .= "# configured with: config setprop git domain <name>\n";
  $OUT .= "\$git_base_url_list = \"" . $git{'domain'} . "\"\;\n";

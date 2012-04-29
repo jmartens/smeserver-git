@@ -5,4 +5,4 @@
 # to user home directories that may be used to keep personal Git
 # repositories.
 
-our $projectroot = $ENV{'GITWEB_PROJECTROOT'} || "/home/e-smith/files/git";
+our $projectroot = $ENV\{'GITWEB_PROJECTROOT'\} || "/home/e-smith/files/git";

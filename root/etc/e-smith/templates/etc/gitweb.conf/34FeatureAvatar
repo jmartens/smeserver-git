@@ -1,0 +1,3 @@
+
+$feature\{'avatar'\}\{'default'\} = ['gravatar'];  
+$feature\{'avatar'\}\{'override'\} = 1;
