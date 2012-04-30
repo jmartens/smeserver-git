@@ -149,7 +149,7 @@
     $OUT .= "\n";
 
     $OUT .= "  <Directory $GitRepositoryRoot>\n";
-    $OUT .= "    Options ExecCGI\n";
+    $OUT .= "    Options ExecCGI Indexes\n";
 #    $OUT .= "    Order   allow,deny\n";
 #    if( $port eq 80 ) {
 #      $OUT .= "    Allow from $gitweb_allow\n";
@@ -169,6 +169,7 @@
     $OUT .= "  </Directory>\n\n";
     
     $OUT .= "  # Serve HTML with gitweb. Use Alias to allow serving required CSS and JS files.\n";
+#    $OUT .= "  Alias  /gitweb/static   /etc/e-smith/web/common\n";
     $OUT .= "  Alias  /gitweb          /usr/share/gitweb\n";
     $OUT .= "\n";
 
@@ -177,7 +178,8 @@
     $OUT .= "  RewriteEngine on\n";
     $OUT .= "  RewriteCond %{REQUEST_FILENAME} !-f\n";
     $OUT .= "  RewriteCond %{REQUEST_FILENAME} !-d\n";
-    $OUT .= "  RewriteRule ^/\$ /gitweb/gitweb.cgi [PT]\n";
+    $OUT .= "  RewriteRule ^/\$ /gitweb/gitweb.cgi [PT]\n\n";
+    $OUT .= "  RewriteCond %{REQUEST_URI} !=/gitweb.*\n";
     $OUT .= "  RewriteRule ^/(.*\\.git/(?!/?(HEAD|info|objects|refs)).*)?\$ /gitweb/gitweb.cgi%{REQUEST_URI} [L,PT]\n";
     
 #    if( $port eq 80 ) {
@@ -201,6 +203,13 @@
     }
     $OUT .= "  </Directory>\n\n";
 
+    $OUT .= "  <Directory /etc/e-smith/web/common>\n";
+    $OUT .= "    Options        ExecCGI\n";
+    $OUT .= "    AllowOverride  None\n";
+    $OUT .= "    Order          allow,deny\n";
+    $OUT .= "    Allow from     All\n";
+    $OUT .= "  </Directory>\n\n";
+    
     my @repositories = $git_db->get_all_by_prop('type' => 'repository');
     foreach my $repository (@repositories)
     {
