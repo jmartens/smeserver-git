@@ -94,7 +94,7 @@ elsif ($event eq 'git-repository-modify')
 chdir "/home/e-smith/files/git/$gitRepositoryName.git"
   or die "Could not chdir to /home/e-smith/files/git/$gitRepositoryName.git";
 
-system("/bin/chown", "-R", "www:www", "/home/e-smith/files/git/$gitRepositoryName.git") == 0
+system("/bin/chown", "-R", "admin:www", "/home/e-smith/files/git/$gitRepositoryName.git") == 0
   or die "Could not change ownership of /home/e-smith/files/git/$gitRepositoryName.git";
 
 chmod 0755, ".";
