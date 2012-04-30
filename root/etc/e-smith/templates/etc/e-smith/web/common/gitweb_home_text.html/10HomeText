@@ -1,0 +1,7 @@
+{
+ $OUT  = "";
+ $OUT .= "Cloning a repository with:\n";
+ $OUT .= "<pre>\n";
+ $OUT .= "  <code>git clone https://" . $git{'domain'} . "/foo.git</code>\n";
+ $OUT .= "</pre>\n";
+}
