@@ -94,7 +94,7 @@ td, th {
 ---------------------------------------------------------------------------- */
 
 .page_header {
-  height: 50px;
+  height: 55px;
   line-height: 50px;
   position: relative;
   padding: 0 27px;
@@ -127,7 +127,8 @@ td, th {
 }
 
 .page_header img.logo {
-  display: none;
+  position: relative;
+  top: 8px;
 }
 
 /* Page Footer
