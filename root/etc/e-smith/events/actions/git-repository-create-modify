@@ -58,7 +58,7 @@ if ($event eq 'git-repository-create')
   # is a bare repository.
   #------------------------------------------------------------
 
-  system("/usr/bin/git", "init", "--bare", "/home/e-smith/files/git/$gitRepositoryName.git") == 0
+  system("/usr/bin/git", "init", "--bare", "--shared=group", "/home/e-smith/files/git/$gitRepositoryName.git") == 0
 	  or die "Error creating the initial bare git respository structure for /home/e-smith/files/git/$gitRepositoryName.git";
 
   # Init the Git description 
@@ -97,4 +97,4 @@ chdir "/home/e-smith/files/git/$gitRepositoryName.git"
 system("/bin/chown", "-R", "admin:www", "/home/e-smith/files/git/$gitRepositoryName.git") == 0
   or die "Could not change ownership of /home/e-smith/files/git/$gitRepositoryName.git";
 
-chmod 0755, ".";
+chmod 0775, ".";
