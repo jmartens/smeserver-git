@@ -1,0 +1,4 @@
+
+# Home Text
+$home_text = "/etc/e-smith/web/common/gitweb_home_text.html";
+
