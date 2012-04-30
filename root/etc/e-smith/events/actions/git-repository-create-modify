@@ -65,9 +65,16 @@ if ($event eq 'git-repository-create')
   open(my $file, '>', "/home/e-smith/files/git/$gitRepositoryName.git/description");
   print $file $repository->prop('Description') . "\n"; 
   
-  # Enable 'post-update' hook
-  system("/bin/cp", "-p", "/home/e-smith/files/git/$gitRepositoryName.git/hooks/post-update.sample", "/home/e-smith/files/git/$gitRepositoryName.git/hooks/post-update") == 0
-	  or die "Error enabling 'post-update' hook on respository /home/e-smith/files/git/$gitRepositoryName.git";
+  # Create a 'post-update' hook
+  open(my $file, '>', "/home/e-smith/files/git/$gitRepositoryName.git/hooks/post-update");
+  print $file "#!/bin/sh\n" .
+              "# Hook script auto generated on repository create by SME server manager. Enables automatic markdown for README.md\n" .
+              "# for viewing in gitweb README.html.\n\n" .
+              "rm -f README.html\n" .
+              "git cat-file -e HEAD:README.md > /dev/null 2>&1\n" .
+              "[ \$? -eq 0 ] && git cat-file blob HEAD:README.md | perl /usr/share/markdown/Markdown.pl --html4tags > README.html\n\n" .
+              "git update-server-info\n";
+  close($file);
 }
 elsif ($event eq 'git-repository-modify')
 {
