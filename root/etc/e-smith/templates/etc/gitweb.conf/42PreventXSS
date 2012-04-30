@@ -1,0 +1,4 @@
+
+# Allow the use of README.html in repository directories as we trust the submitters of our repositories.
+$prevent_xss = 0;
+
