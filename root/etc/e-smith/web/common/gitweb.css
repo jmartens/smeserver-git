@@ -127,8 +127,7 @@ td, th {
 }
 
 .page_header img.logo {
-  position: relative;
-  top: 8px;
+  display: none;
 }
 
 /* Page Footer
