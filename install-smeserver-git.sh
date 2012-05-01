@@ -35,6 +35,11 @@ echo "TBD"
 echo "Expanding HTTP template ..."
 expand-template     /etc/httpd/conf/httpd.conf
 
+echo "Installing Markdown.pl package ..."
+cp -rf root/usr/share/markdown /usr/shared/markdown/*
+chown  -R root:root /usr/shared/markdown
+chmod  444          /usr/shared/markdown/*
+
 echo "Installing Gitweb resources ..."
 rm -f      /etc/e-smith/web/common/git*
 cp -r  root/etc/e-smith/web/common/git* /etc/e-smith/web/common
