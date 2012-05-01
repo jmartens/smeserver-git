@@ -179,7 +179,6 @@ sub git_repository_print_table {
   my $name                     = $self->localise('NAME');
   my $description              = $self->localise('DESCRIPTION');
   my $access                   = $self->localise('ACCESS');
-  my $force_ssl                = $self->localise('GIT_HEADER_FORCE_SSL');
   my $authentication_required  = $self->localise('GIT_HEADER_AUTHENTICATION_REQUIRED');
   
   my $modify                   = $self->localise('MODIFY');
@@ -202,7 +201,6 @@ sub git_repository_print_table {
                 esmith::cgi::genSmallCell($q, $name,"header"),
                 esmith::cgi::genSmallCell($q, $description,"header"),
                 esmith::cgi::genSmallCell($q, $access,"header"),
-                esmith::cgi::genSmallCell($q, $force_ssl,"header"),
                 esmith::cgi::genSmallCell($q, $authentication_required,"header"),
                 esmith::cgi::genSmallCell($q, $action_h,"header", 3)), "\n";
   
@@ -213,7 +211,6 @@ sub git_repository_print_table {
     my $repo_name                    = $repository->key();
     my $repo_description             = $repository->prop('Description');
     my $repo_access_type             = $repository->prop('AccessType');
-    my $repo_force_ssl               = $repository->prop('ForceSSL');
     my $repo_authentication_required = $repository->prop('AuthenticationRequired');
 
     my $params = $self->build_repository_cgi_params($repo_name, $repository->props());
@@ -225,7 +222,6 @@ sub git_repository_print_table {
         esmith::cgi::genSmallCell($q, $repo_name . ".git", "normal"),
         esmith::cgi::genSmallCell($q, $repo_description, "normal"),
         esmith::cgi::genSmallCell($q, $repo_access_type, "normal"),
-        esmith::cgi::genSmallCell($q, $repo_force_ssl, "normal"),
         esmith::cgi::genSmallCell($q, $repo_authentication_required, "normal"),
 
         esmith::cgi::genSmallCell($q, $actionModify,"normal"),
@@ -324,7 +320,6 @@ sub git_repository_print_name_field {
       $q->param(-name=>'description',             -value=>$repository->prop('Description'));
       $q->param(-name=>'access_type',             -value=>$repository->prop('AccessType'));
       $q->param(-name=>'authentication_required', -value=>$repository->prop('AuthenticationRequired'));
-      $q->param(-name=>'force_ssl',               -value=>$repository->prop('ForceSSL'));
       $q->param(-name=>'groupsPull',              -value=>join(FS, split(FS, $repository->prop('GroupsPull'))));
       $q->param(-name=>'usersPull',               -value=>join(FS, split(FS, $repository->prop('UsersPull'))));
       $q->param(-name=>'groupsPush',              -value=>join(FS, split(FS, $repository->prop('GroupsPush'))));
@@ -423,12 +418,6 @@ sub git_repository_handle_create {
     return $self->error($msg);
   }
 
-  $msg = $self->validate_radio($self->cgi->param('force_ssl'));
-  unless ($msg eq "OK")
-  {
-    return $self->error($msg);
-  }
-
   $msg = $self->validate_radio($self->cgi->param('authentication_required'));
   unless ($msg eq "OK")
   {
@@ -486,7 +475,6 @@ sub git_repository_handle_create {
           UsersPull                => "$usr_pull_list",
           GroupsPush               => "$grp_push_list",
           UsersPush                => "$usr_push_list",
-          ForceSSL                 => $self->cgi->param('force_ssl'),
           AccessType               => $self->cgi->param('access_type'),
           AuthenticationRequired   => $self->cgi->param('authentication_required'),
           type                     => 'repository',
@@ -585,7 +573,6 @@ sub git_respository_handle_modify {
                                 UsersPull                => "$usr_pull_list",
                                 GroupsPush               => "$grp_push_list",
                                 UsersPush                => "$usr_push_list",
-                                ForceSSL                 => $self->cgi->param('force_ssl'),
                                 AccessType               => $self->cgi->param('access_type'),
                                 AuthenticationRequired   => $self->cgi->param('authentication_required'),
                                 type                     => 'repository',

@@ -237,7 +237,6 @@
 
     $OUT .= "  # Git Repository : $git_repository.git ($properties{'Description'})\n";
     $OUT .= "  #   - AccessType : $properties{'AccessType'}\n";
-    $OUT .= "  #   - ForceSSL   : $properties{'ForceSSL'}\n";
     $OUT .= "  #   - Auth. Req. : $properties{'AuthenticationRequired'}\n";
     $OUT .= "  #   - Allow From : $allow\n";
 

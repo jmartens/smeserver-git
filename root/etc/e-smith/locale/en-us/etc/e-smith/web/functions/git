@@ -86,11 +86,6 @@ characters.</trans>
   </entry>
 
   <entry>
-    <base>GIT_HEADER_FORCE_SSL</base>
-    <trans>ForceSSL</trans>
-  </entry>
-
-  <entry>
     <base>GIT_HEADER_AUTHENTICATION_REQUIRED</base>
     <trans>Auth. Req.</trans>
   </entry>
@@ -103,11 +98,6 @@ characters.</trans>
                 (enables HTTP over SSL automatically)
             ]]>
     </trans>
-  </entry>
-
-  <entry>
-    <base>GIT_LABEL_FORCE_SSL</base>
-    <trans>Force HTTP over SSL</trans>
   </entry>
 
   <entry>

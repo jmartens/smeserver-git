@@ -81,14 +81,6 @@ __DATA__
       <label>GIT_LABEL_AUTHENTICATION_REQUIRED</label>
     </field>
 
-    <field 
-      type="radio" 
-      id="force_ssl" 
-      options="'yes', 'no'"
-      validation="validate_radio">
-      <label>GIT_LABEL_FORCE_SSL</label>
-    </field>
-      
     <subroutine src="print_privileges()" />
 
     <field 
