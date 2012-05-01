@@ -115,7 +115,7 @@
   $OUT .= "</VirtualHost>\n\n";
 
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
-  #~~~ All Git domain handling done in HTTPS
+  #~~~ All Git domain handling done through HTTPS
 
   $OUT .= "<VirtualHost 0.0.0.0:443>\n";
   $OUT .= "  # Configure hostname\n";
@@ -149,12 +149,6 @@
   $OUT .= "  SetEnv REMOTE_USER=\$REDIRECT_REMOTE_USER\n"; 
   $OUT .= "\n";
   
-  if( $user_repositories eq 'enabled' ) {
-    $OUT .= "  # Serve repositories in users directory git as well\n";
-    $OUT .= "  RewriteRule ^/~([^\\/]+)/?\$  /gitweb/gitweb.cgi [QSA,E=GITWEB_PROJECTROOT:/home/e-smith/files/users/\$1/git/,L,PT]\n";
-    $OUT .= "\n";
-  }
-  
   $OUT .= "  # We use ScriptAliasMatch to match those URLs \n";
   $OUT .= "  # that git-http-backend can handle, and forward the rest to gitweb\n";
   $OUT .= "  ScriptAliasMatch \\\n";
@@ -184,14 +178,14 @@
   $OUT .= "  Alias  /gitweb          /usr/share/gitweb\n";
   $OUT .= "\n";
 
-  $OUT .= "  # Ensure we can browse the repo with http://git.server.com/repo.git\n";
-  $OUT .= "  # instead of http://git.server.com/?p=repo.git;a=summary.\n";
-  $OUT .= "  RewriteEngine on\n";
-  $OUT .= "  RewriteCond %{REQUEST_FILENAME} !-f\n";
-  $OUT .= "  RewriteCond %{REQUEST_FILENAME} !-d\n";
-  $OUT .= "  RewriteRule ^/\$ /gitweb/gitweb.cgi [PT]\n\n";
-  $OUT .= "  RewriteCond %{REQUEST_URI} !=/gitweb.*\n";
-  $OUT .= "  RewriteRule ^/(.*\\.git/(?!/?(HEAD|info|objects|refs)).*)?\$ /gitweb/gitweb.cgi%{REQUEST_URI} [L,PT]\n";
+#  $OUT .= "  # Ensure we can browse the repo with http://git.server.com/repo.git\n";
+#  $OUT .= "  # instead of http://git.server.com/?p=repo.git;a=summary.\n";
+#  $OUT .= "  RewriteEngine on\n";
+#  $OUT .= "  RewriteCond %{REQUEST_FILENAME} !-f\n";
+#  $OUT .= "  RewriteCond %{REQUEST_FILENAME} !-d\n";
+#  $OUT .= "  RewriteRule ^/\$ /gitweb/gitweb.cgi [PT]\n\n";
+#  $OUT .= "  RewriteCond %{REQUEST_URI} !=/gitweb.*\n";
+#  $OUT .= "  RewriteRule ^/(.*\\.git/(?!/?(HEAD|info|objects|refs)).*)?\$ /gitweb/gitweb.cgi%{REQUEST_URI} [L,PT]\n";
   
   $OUT .= "  <Directory $GitWebRoot>\n";
   $OUT .= "    Options        ExecCGI\n";
