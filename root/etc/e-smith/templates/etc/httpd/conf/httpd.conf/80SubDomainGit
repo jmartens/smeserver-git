@@ -213,7 +213,6 @@
     my %properties              = $repository->props;
   
     my $allow;
-    my $authentication_required = 0;
     my $satisfy                 = 'All';
     
     # Retrieve the access rules for the repository
@@ -237,7 +236,6 @@
 
     $OUT .= "  # Git Repository : $git_repository.git ($properties{'Description'})\n";
     $OUT .= "  #   - AccessType : $properties{'AccessType'}\n";
-    $OUT .= "  #   - Auth. Req. : $properties{'AuthenticationRequired'}\n";
     $OUT .= "  #   - Allow From : $allow\n";
 
     $OUT .= "  <Location \"/$git_repository.git\">\n";

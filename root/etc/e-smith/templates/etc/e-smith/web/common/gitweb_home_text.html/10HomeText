@@ -5,6 +5,6 @@
  $OUT .= "  <pre>\n";
  $OUT .= "    <code>git clone https://" . $git{'domain'} . "/foo.git</code>\n";
  $OUT .= "  </pre>\n";
- $OUT .= "  <a href=\"https://nobody\@" . $git{'domain'} . "/\?reqauth=1\">Force Authentication</a> to see private repositories.\n";
+ $OUT .= "  <a href=\"https://nobody\@" . $git{'domain'} . "/\?reqauth=1\">Login</a> to see private repositories.\n";
  $OUT .= "</div>\n";
 }

@@ -72,14 +72,6 @@ __DATA__
       validation="validate_radio">
       <label>GIT_LABEL_ACCESS</label>
     </field>
-      
-    <field 
-      type="radio" 
-      id="authentication_required" 
-      options="'yes', 'no'" 
-      validation="validate_radio">
-      <label>GIT_LABEL_AUTHENTICATION_REQUIRED</label>
-    </field>
 
     <subroutine src="print_privileges()" />
 
