@@ -93,7 +93,7 @@ __DATA__
 
     <field 
       type="select" 
-      id="groupsReadOnly" 
+      id="groupsPull" 
       options="git_repository_group_list()" 
       multiple="1" size="5">
       <label>GIT_PRIVILEGES_GROUPS_PULL</label>
@@ -101,7 +101,7 @@ __DATA__
 
     <field 
       type="select" 
-      id="usersReadOnly" 
+      id="usersPull" 
       options="git_repository_user_list()" 
       multiple="1" size="5">
       <label>GIT_PRIVILEGES_USERS_PULL</label>
@@ -109,7 +109,7 @@ __DATA__
     
     <field 
       type="select" 
-      id="groupsReadWrite" 
+      id="groupsPush" 
       options="git_repository_group_list()" 
       multiple="1" size="5">
       <label>GIT_PRIVILEGES_GROUPS_PUSH</label>
@@ -117,7 +117,7 @@ __DATA__
     
     <field 
       type="select" 
-      id="usersReadWrite" 
+      id="usersPush" 
       options="git_repository_user_list()" 
       multiple="1" size="5">
       <label>GIT_PRIVILEGES_USERS_PUSH</label>

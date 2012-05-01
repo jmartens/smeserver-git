@@ -321,14 +321,14 @@ sub git_repository_print_name_field {
     my $q = $self->{cgi};
     if ($repository)
     {
-      $q->param(-name=>'description',     -value=>$repository->prop('Description'));
-      $q->param(-name=>'access_type',     -value=>$repository->prop('AccessType'));
+      $q->param(-name=>'description',             -value=>$repository->prop('Description'));
+      $q->param(-name=>'access_type',             -value=>$repository->prop('AccessType'));
       $q->param(-name=>'authentication_required', -value=>$repository->prop('AuthenticationRequired'));
-      $q->param(-name=>'force_ssl',       -value=>$repository->prop('ForceSSL'));
-      $q->param(-name=>'groupsReadOnly',  -value=>join(FS, split(FS, $repository->prop('GroupsPull'))));
-      $q->param(-name=>'usersReadOnly',   -value=>join(FS, split(FS, $repository->prop('UsersPull'))));
-      $q->param(-name=>'groupsReadWrite', -value=>join(FS, split(FS, $repository->prop('GroupsPush'))));
-      $q->param(-name=>'usersReadWrite',  -value=>join(FS, split(FS, $repository->prop('UsersPush'))));
+      $q->param(-name=>'force_ssl',               -value=>$repository->prop('ForceSSL'));
+      $q->param(-name=>'groupsPull',              -value=>join(FS, split(FS, $repository->prop('GroupsPull'))));
+      $q->param(-name=>'usersPull',               -value=>join(FS, split(FS, $repository->prop('UsersPull'))));
+      $q->param(-name=>'groupsPush',              -value=>join(FS, split(FS, $repository->prop('GroupsPush'))));
+      $q->param(-name=>'usersPush',               -value=>join(FS, split(FS, $repository->prop('UsersPush'))));
     }
   } else {
     print qq(
@@ -436,42 +436,42 @@ sub git_repository_handle_create {
   }
 
   my $grp_pull_list;
-  my @groupsReadOnly = $self->cgi->param('groupsReadOnly');
-  foreach my $gro (@groupsReadOnly) {
+  my @groupsPull = $self->cgi->param('groupsPull');
+  foreach my $grp_pull (@groupsPull) {
     if ($grp_pull_list) {
-      $grp_pull_list .= "," . $gro;
+      $grp_pull_list .= "," . $grp_pull;
     } else {
-      $grp_pull_list = $gro;
+      $grp_pull_list = $grp_pull;
     }
   }
 
   my $usr_pull_list;
-  my @usersReadOnly = $self->cgi->param('usersReadOnly');
-  foreach my $uro (@usersReadOnly) {
+  my @usersPull = $self->cgi->param('usersPull');
+  foreach my $usr_pull (@usersPull) {
     if ($usr_pull_list) {
-      $usr_pull_list .= "," . $uro;
+      $usr_pull_list .= "," . $usr_pull;
     } else {
-      $usr_pull_list = $uro;
+      $usr_pull_list = $usr_pull;
     }
   }
 
   my $grp_push_list;
-  my @groupsReadWrite = $self->cgi->param('groupsReadWrite');
-  foreach my $grw (@groupsReadWrite) {
+  my @groupsPush = $self->cgi->param('groupsPush');
+  foreach my $grp_push (@groupsPush) {
     if ($grp_push_list) {
-      $grp_push_list .= "," . $grw;
+      $grp_push_list .= "," . $grp_push;
     } else {
-      $grp_push_list = $grw;
+      $grp_push_list = $grp_push;
     }
   }
 
   my $usr_push_list;
-  my @usersReadWrite = $self->cgi->param('usersReadWrite');
-  foreach my $urw (@usersReadWrite) {
+  my @usersPush = $self->cgi->param('usersPush');
+  foreach my $usr_push (@usersPush) {
     if ($usr_push_list) {
-      $usr_push_list .= "," . $urw;
+      $usr_push_list .= "," . $usr_push;
     } else {
-      $usr_push_list = $urw;
+      $usr_push_list = $usr_push;
     }
   }
   
@@ -482,10 +482,10 @@ sub git_repository_handle_create {
   if (my $repository = $git_db->new_record($repositoryName, 
        {
           Description              => $self->cgi->param('description'),
-          GroupsPull           => "$grp_pull_list",
-          UsersPull            => "$usr_pull_list",
-          GroupsPush          => "$grp_push_list",
-          UsersPush           => "$usr_push_list",
+          GroupsPull               => "$grp_pull_list",
+          UsersPull                => "$usr_pull_list",
+          GroupsPush               => "$grp_push_list",
+          UsersPush                => "$usr_push_list",
           ForceSSL                 => $self->cgi->param('force_ssl'),
           AccessType               => $self->cgi->param('access_type'),
           AuthenticationRequired   => $self->cgi->param('authentication_required'),
@@ -539,52 +539,52 @@ sub git_respository_handle_modify {
   }
 
   my $grp_pull_list;
-  my @groupsReadOnly = $self->cgi->param('groupsReadOnly');
-  foreach my $gro (@groupsReadOnly) {
+  my @groupsPull = $self->cgi->param('groupsPull');
+  foreach my $grp_pull (@groupsPull) {
     if ($grp_pull_list) {
-      $grp_pull_list .= "," . $gro;
+      $grp_pull_list .= "," . $grp_pull;
     } else {
-      $grp_pull_list = $gro;
+      $grp_pull_list = $grp_pull;
     }
   }
 
   my $usr_pull_list;
-  my @usersReadOnly = $self->cgi->param('usersReadOnly');
-  foreach my $uro (@usersReadOnly) {
+  my @usersPull = $self->cgi->param('usersPull');
+  foreach my $usr_pull (@usersPull) {
     if ($usr_pull_list) {
-      $usr_pull_list .= "," . $uro;
+      $usr_pull_list .= "," . $usr_pull;
     } else {
-      $usr_pull_list = $uro;
+      $usr_pull_list = $usr_pull;
     }
   }
 
   my $grp_push_list;
-  my @groupsReadWrite = $self->cgi->param('groupsReadWrite');
-  foreach my $grw (@groupsReadWrite) {
+  my @groupsPush = $self->cgi->param('groupsPush');
+  foreach my $grp_push (@groupsPush) {
     if ($grp_push_list) {
-      $grp_push_list .= "," . $grw;
+      $grp_push_list .= "," . $grp_push;
     } else {
-      $grp_push_list = $grw;
+      $grp_push_list = $grp_push;
     }
   }
 
   my $usr_push_list;
-  my @usersReadWrite = $self->cgi->param('usersReadWrite');
-  foreach my $urw (@usersReadWrite) {
+  my @usersPush = $self->cgi->param('usersPush');
+  foreach my $usr_push (@usersPush) {
     if ($usr_push_list) {
-      $usr_push_list .= "," . $urw;
+      $usr_push_list .= "," . $usr_push;
     } else {
-      $usr_push_list = $urw;
+      $usr_push_list = $usr_push;
     }
   }
 
   if (my $repository = $git_db->get($repositoryName)) {
     if ($repository->prop('type') eq 'repository') {
       $repository->merge_props( Description              => $self->cgi->param('description'),
-                                GroupsPull           => "$grp_pull_list",
-                                UsersPull            => "$usr_pull_list",
-                                GroupsPush          => "$grp_push_list",
-                                UsersPush           => "$usr_push_list",
+                                GroupsPull               => "$grp_pull_list",
+                                UsersPull                => "$usr_pull_list",
+                                GroupsPush               => "$grp_push_list",
+                                UsersPush                => "$usr_push_list",
                                 ForceSSL                 => $self->cgi->param('force_ssl'),
                                 AccessType               => $self->cgi->param('access_type'),
                                 AuthenticationRequired   => $self->cgi->param('authentication_required'),
