@@ -20,7 +20,7 @@
     <trans>
       <![CDATA[ 
         <p>This panel allows creating and configuration of access permissions of centralised Git repositories on this server.</p>
-        <p>Configured Git repositories will be available through HTTP/HTTPS and also through the
+        <p>Configured Git repositories will only be available through HTTPS and also through the
            web interface available at the "yourserver"/git URL.</p>
         <p>For more details and documentation on using Git, click on the Git logo on the left.</p>
       ]]>
@@ -113,28 +113,28 @@ characters.</trans>
   <entry>
     <base>GIT_PRIVILEGES_NOTE</base>
     <trans>
-      <![CDATA[ <p> Use the selection boxes below to you configure the access permissions for the Git repository.<br />Select either groups or individual users. Press the SHIFT key to select multiple groups or users.<br />If you set neither group nor user setting for a access permissions, the access permissions will default to anonymous access.<br />The only exception is when you have specified read-only access permissions (either for user(s), group(s) or both), there will be no anonymous write access.<br />If you want your user(s) or group(s) to have full access specify them in the read-write box. </p> ]]>
+      <![CDATA[ <p> Use the selection boxes below to you configure the pull and push permissions for the Git repository.<br />Select either groups or individual users. Press the SHIFT key to select multiple groups or users.<br />If you set neither group nor user setting for a access permissions, the access permissions will default to anonymous access.<br />The only exception is when you have specified pull access permissions (either for user(s), group(s) or both), there will be no anonymous push access.<br />If you want your user(s) or group(s) to have exclusive full pull and push access specify them in both the pull and push box. </p> ]]>
     </trans>
   </entry>
   
   <entry>
-    <base>GIT_PRIVILEGES_GROUPS_READ_ONLY</base>
-    <trans>Groups (read only access)</trans>
+    <base>GIT_PRIVILEGES_GROUPS_PULL</base>
+    <trans>Groups allowed to pull</trans>
   </entry>
 
   <entry>
-    <base>GIT_PRIVILEGES_GROUPS_READ_WRITE</base>
-    <trans>Groups (read/write access)</trans>
+    <base>GIT_PRIVILEGES_GROUPS_PUSH</base>
+    <trans>Groups allowed to push</trans>
   </entry>
 
   <entry>
-    <base>GIT_PRIVILEGES_USERS_READ_ONLY</base>
-    <trans>Users (read only access)</trans>
+    <base>GIT_PRIVILEGES_USERS_PULL</base>
+    <trans>Users allowed to pull</trans>
   </entry>
   
   <entry>
-    <base>GIT_PRIVILEGES_USERS_READ_WRITE</base>
-    <trans>Users (read/write access)</trans>
+    <base>GIT_PRIVILEGES_USERS_PUSH</base>
+    <trans>Users allowed to push</trans>
   </entry>
 
   <entry>

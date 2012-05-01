@@ -325,10 +325,10 @@ sub git_repository_print_name_field {
       $q->param(-name=>'access_type',     -value=>$repository->prop('AccessType'));
       $q->param(-name=>'authentication_required', -value=>$repository->prop('AuthenticationRequired'));
       $q->param(-name=>'force_ssl',       -value=>$repository->prop('ForceSSL'));
-      $q->param(-name=>'groupsReadOnly',  -value=>join(FS, split(FS, $repository->prop('GroupsReadOnly'))));
-      $q->param(-name=>'usersReadOnly',   -value=>join(FS, split(FS, $repository->prop('UsersReadOnly'))));
-      $q->param(-name=>'groupsReadWrite', -value=>join(FS, split(FS, $repository->prop('GroupsReadWrite'))));
-      $q->param(-name=>'usersReadWrite',  -value=>join(FS, split(FS, $repository->prop('UsersReadWrite'))));
+      $q->param(-name=>'groupsReadOnly',  -value=>join(FS, split(FS, $repository->prop('GroupsPull'))));
+      $q->param(-name=>'usersReadOnly',   -value=>join(FS, split(FS, $repository->prop('UsersPull'))));
+      $q->param(-name=>'groupsReadWrite', -value=>join(FS, split(FS, $repository->prop('GroupsPush'))));
+      $q->param(-name=>'usersReadWrite',  -value=>join(FS, split(FS, $repository->prop('UsersPush'))));
     }
   } else {
     print qq(
@@ -482,10 +482,10 @@ sub git_repository_handle_create {
   if (my $repository = $git_db->new_record($repositoryName, 
        {
           Description              => $self->cgi->param('description'),
-          GroupsReadOnly           => "$gro_list",
-          UsersReadOnly            => "$uro_list",
-          GroupsReadWrite          => "$grw_list",
-          UsersReadWrite           => "$urw_list",
+          GroupsPull           => "$gro_list",
+          UsersPull            => "$uro_list",
+          GroupsPush          => "$grw_list",
+          UsersPush           => "$urw_list",
           ForceSSL                 => $self->cgi->param('force_ssl'),
           AccessType               => $self->cgi->param('access_type'),
           AuthenticationRequired   => $self->cgi->param('authentication_required'),
@@ -581,10 +581,10 @@ sub git_respository_handle_modify {
   if (my $repository = $git_db->get($repositoryName)) {
     if ($repository->prop('type') eq 'repository') {
       $repository->merge_props( Description              => $self->cgi->param('description'),
-                                GroupsReadOnly           => "$gro_list",
-                                UsersReadOnly            => "$uro_list",
-                                GroupsReadWrite          => "$grw_list",
-                                UsersReadWrite           => "$urw_list",
+                                GroupsPull           => "$gro_list",
+                                UsersPull            => "$uro_list",
+                                GroupsPush          => "$grw_list",
+                                UsersPush           => "$urw_list",
                                 ForceSSL                 => $self->cgi->param('force_ssl'),
                                 AccessType               => $self->cgi->param('access_type'),
                                 AuthenticationRequired   => $self->cgi->param('authentication_required'),

@@ -174,6 +174,8 @@
   $OUT .= "  RewriteRule ^/\$ /gitweb/gitweb.cgi [PT]\n\n";
 
 #  $OUT .= "  RewriteCond %{REQUEST_URI} !=/gitweb.*\n";
+  $OUT .= "  RewriteCond %{REQUEST_FILENAME} !-f\n";
+  $OUT .= "  RewriteCond %{REQUEST_FILENAME} !-d\n";
 #  $OUT .= "  RewriteRule ^/(.*\\.git/(?!/?(HEAD|info|objects|refs)).*)?\$ /gitweb/gitweb.cgi%{REQUEST_URI} [L,PT]\n";
   
   $OUT .= "  <Directory $GitWebRoot>\n";
@@ -228,10 +230,10 @@
       }
     }
   
-    $effectiveUsersReadWrite = $git_db->effective_users_list_from( $properties{'GroupsReadWrite'}, 
-                                                                   $properties{'UsersReadWrite'} ); 
-    $effectiveUsersReadOnly  = $git_db->effective_users_list_from( $properties{'GroupsReadOnly'},  
-                                                                   $properties{'UsersReadOnly'} ); 
+    $effectiveUsersPush = $git_db->effective_users_list_from( $properties{'GroupsPush'}, 
+                                                                   $properties{'UsersPush'} ); 
+    $effectiveUsersPull  = $git_db->effective_users_list_from( $properties{'GroupsPull'},  
+                                                                   $properties{'UsersPull'} ); 
 
     $OUT .= "  # Git Repository : $git_repository.git ($properties{'Description'})\n";
     $OUT .= "  #   - AccessType : $properties{'AccessType'}\n";
@@ -246,7 +248,7 @@
     $OUT .= "    AuthName      \"Git repository: $git_repository\.git ($properties{'Description'})\"\n";
     $OUT .= "    AuthType      Basic\n";
     $OUT .= "    AuthExternal  pwauth\n";
-    $OUT .= "    Require user  $effectiveUsersReadWrite\n";
+    $OUT .= "    Require user  $effectiveUsersPush\n";
     $OUT .= "\n";
     $OUT .= "    # Allow Network Access and/or Basic Auth\n";
     $OUT .= "    Satisfy       Any\n";
@@ -257,15 +259,15 @@
     $OUT .= "    Allow         from All\n";
     $OUT .= "\n";
     $OUT .= "    # Read only access:\n";
-    $OUT .= "    #  Configured Group(s): " . ($properties{'GroupsReadOnly'} || "none") . "\n";
-    $OUT .= "    #  Configured User(s) : " . ($properties{'UsersReadOnly'}  || "none") . "\n";
-    $OUT .= "    #  Effective User(s)  : " . ($effectiveUsersReadOnly       || "Anonymous") . "\n";
+    $OUT .= "    #  Configured Group(s): " . ($properties{'GroupsPull'} || "none") . "\n";
+    $OUT .= "    #  Configured User(s) : " . ($properties{'UsersPull'}  || "none") . "\n";
+    $OUT .= "    #  Effective User(s)  : " . ($effectiveUsersPull       || "Anonymous") . "\n";
 
     $OUT .= "\n";
     $OUT .= "    # Read/Write access:\n";
-    $OUT .= "    #  Configured Group(s): " . ($properties{'GroupsReadWrite'} || "none") . "\n";
-    $OUT .= "    #  Configured User(s) : " . ($properties{'UsersReadWrite'}  || "none") . "\n";
-    $OUT .= "    #  Effective User(s)  : " . ($effectiveUsersReadWrite       || "Anonymous") . "\n";
+    $OUT .= "    #  Configured Group(s): " . ($properties{'GroupsPush'} || "none") . "\n";
+    $OUT .= "    #  Configured User(s) : " . ($properties{'UsersPush'}  || "none") . "\n";
+    $OUT .= "    #  Effective User(s)  : " . ($effectiveUsersPush       || "Anonymous") . "\n";
     $OUT .= "\n";
     $OUT .= "  </Location> # $git_repository.git\n\n";
   }
