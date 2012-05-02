@@ -45,7 +45,9 @@ echo "Expanding HTTP template ..."
 expand-template     /etc/httpd/conf/httpd.conf
 
 echo "Installing Markdown.pl package ..."
-cp -rf root/usr/share/markdown /usr/share/markdown/*
+
+mkdir -p  /usr/share/markdown
+cp -rf    root/usr/share/markdown/* /usr/share/markdown
 chown  -R root:root /usr/share/markdown
 chown  -R root:root /usr/share/markdown/*
 chmod  444          /usr/share/markdown/*
