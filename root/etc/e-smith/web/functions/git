@@ -41,7 +41,7 @@ __DATA__
 
   <!-- page 0 -->
   <page 
-    name="GitHome"
+    name="First"
     pre-event="print_status_message()" >
 
     <subroutine src="git_print_home_description()" />

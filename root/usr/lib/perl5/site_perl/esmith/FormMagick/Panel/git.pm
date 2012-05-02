@@ -413,43 +413,43 @@ sub git_repository_handle_create {
     return $self->error($msg);
   }
 
-  my $grp_pull_list;
+  my $groups_allowed_to_pull = "";
   my @groupsPull = $self->cgi->param('groupsPull');
   foreach my $grp_pull (@groupsPull) {
-    if ($grp_pull_list) {
-      $grp_pull_list .= "," . $grp_pull;
+    if ($groups_allowed_to_pull) {
+      $groups_allowed_to_pull .= "," . $grp_pull;
     } else {
-      $grp_pull_list = $grp_pull;
+      $groups_allowed_to_pull = $grp_pull;
     }
   }
 
-  my $usr_pull_list;
+  my $users_allowed_to_pull = "";
   my @usersPull = $self->cgi->param('usersPull');
   foreach my $usr_pull (@usersPull) {
-    if ($usr_pull_list) {
-      $usr_pull_list .= "," . $usr_pull;
+    if ($users_allowed_to_pull) {
+      $users_allowed_to_pull .= "," . $usr_pull;
     } else {
-      $usr_pull_list = $usr_pull;
+      $users_allowed_to_pull = $usr_pull;
     }
   }
 
-  my $grp_push_list;
+  my $groups_allowed_to_push = "";
   my @groupsPush = $self->cgi->param('groupsPush');
   foreach my $grp_push (@groupsPush) {
-    if ($grp_push_list) {
-      $grp_push_list .= "," . $grp_push;
+    if ($groups_allowed_to_push) {
+      $groups_allowed_to_push .= "," . $grp_push;
     } else {
-      $grp_push_list = $grp_push;
+      $groups_allowed_to_push = $grp_push;
     }
   }
 
-  my $usr_push_list;
+  my $users_allowed_to_push = "";
   my @usersPush = $self->cgi->param('usersPush');
   foreach my $usr_push (@usersPush) {
-    if ($usr_push_list) {
-      $usr_push_list .= "," . $usr_push;
+    if ($users_allowed_to_push) {
+      $users_allowed_to_push .= "," . $usr_push;
     } else {
-      $usr_push_list = $usr_push;
+      $users_allowed_to_push = $usr_push;
     }
   }
   
@@ -459,14 +459,14 @@ sub git_repository_handle_create {
   
   if (my $repository = $git_db->new_record($repositoryName, 
        {
-          Description              => $self->cgi->param('description'),
-          GroupsPull               => "$grp_pull_list",
-          UsersPull                => "$usr_pull_list",
-          GroupsPush               => "$grp_push_list",
-          UsersPush                => "$usr_push_list",
-          AccessType               => $self->cgi->param('access_type'),
-          type                     => 'repository',
-        }) )
+          Description => $self->cgi->param('description'),
+          GroupsPull  => "$groups_allowed_to_pull",
+          UsersPull   => "$users_allowed_to_pull",
+          GroupsPush  => "$groups_allowed_to_push",
+          UsersPush   => "$users_allowed_to_push",
+          AccessType  => $self->cgi->param('access_type'),
+          type        => 'repository',
+        } ) )
   {
     # Untaint $name before use in system()
     $repositoryName =~ /(.+)/; 
@@ -502,61 +502,55 @@ sub git_respository_handle_modify {
     return $self->error($msg);
   }
 
-  $msg = $self->validate_radio($self->cgi->param('force_ssl'));
-  unless ($msg eq "OK")
-  {
-    return $self->error($msg);
-  }
-
-  my $grp_pull_list;
+  my $groups_allowed_to_pull = "";
   my @groupsPull = $self->cgi->param('groupsPull');
   foreach my $grp_pull (@groupsPull) {
-    if ($grp_pull_list) {
-      $grp_pull_list .= "," . $grp_pull;
+    if ($groups_allowed_to_pull) {
+      $groups_allowed_to_pull .= "," . $grp_pull;
     } else {
-      $grp_pull_list = $grp_pull;
+      $groups_allowed_to_pull = $grp_pull;
     }
   }
 
-  my $usr_pull_list;
+  my $users_allowed_to_pull = "";
   my @usersPull = $self->cgi->param('usersPull');
   foreach my $usr_pull (@usersPull) {
-    if ($usr_pull_list) {
-      $usr_pull_list .= "," . $usr_pull;
+    if ($users_allowed_to_pull) {
+      $users_allowed_to_pull .= "," . $usr_pull;
     } else {
-      $usr_pull_list = $usr_pull;
+      $users_allowed_to_pull = $usr_pull;
     }
   }
 
-  my $grp_push_list;
+  my $groups_allowed_to_push = "";
   my @groupsPush = $self->cgi->param('groupsPush');
   foreach my $grp_push (@groupsPush) {
-    if ($grp_push_list) {
-      $grp_push_list .= "," . $grp_push;
+    if ($groups_allowed_to_push) {
+      $groups_allowed_to_push .= "," . $grp_push;
     } else {
-      $grp_push_list = $grp_push;
+      $groups_allowed_to_push = $grp_push;
     }
   }
 
-  my $usr_push_list;
+  my $users_allowed_to_push = "";
   my @usersPush = $self->cgi->param('usersPush');
   foreach my $usr_push (@usersPush) {
-    if ($usr_push_list) {
-      $usr_push_list .= "," . $usr_push;
+    if ($users_allowed_to_push) {
+      $users_allowed_to_push .= "," . $usr_push;
     } else {
-      $usr_push_list = $usr_push;
+      $users_allowed_to_push = $usr_push;
     }
   }
 
   if (my $repository = $git_db->get($repositoryName)) {
     if ($repository->prop('type') eq 'repository') {
-      $repository->merge_props( Description              => $self->cgi->param('description'),
-                                GroupsPull               => "$grp_pull_list",
-                                UsersPull                => "$usr_pull_list",
-                                GroupsPush               => "$grp_push_list",
-                                UsersPush                => "$usr_push_list",
-                                AccessType               => $self->cgi->param('access_type'),
-                                type                     => 'repository',
+      $repository->merge_props( Description => $self->cgi->param('description'),
+                                GroupsPull  => "$groups_allowed_to_pull",
+                                UsersPull   => "$users_allowed_to_pull",
+                                GroupsPush  => "$groups_allowed_to_push",
+                                UsersPush   => "$users_allowed_to_push",
+                                AccessType  => $self->cgi->param('access_type'),
+                                type        => 'repository',
                                 );
 
       # Untaint $name before use in system()
@@ -601,7 +595,7 @@ sub git_repository_handle_remove {
   } else {
       $self->error('GIT_ERROR_CANT_FIND_REPOSITORY');
   }
-  $self->wherenext('GitHome');
+  $self->wherenext('First');
 }
 
 #######################################################################
