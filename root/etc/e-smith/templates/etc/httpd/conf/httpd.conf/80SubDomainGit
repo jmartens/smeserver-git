@@ -163,20 +163,19 @@
   
   $OUT .= "  # Serve HTML with gitweb. Use Alias to allow serving required CSS and JS files.\n";
 #    $OUT .= "  Alias  /gitweb/static   /etc/e-smith/web/common\n";
-  $OUT .= "  Alias  /gitweb          /usr/share/gitweb\n";
-  $OUT .= "\n";
+  $OUT .= "  Alias  /gitweb          /usr/share/gitweb\n\n";
 
-  $OUT .= "  # Ensure we can browse the repo with http://git.server.com/repo.git\n";
-  $OUT .= "  # instead of http://git.server.com/?p=repo.git;a=summary.\n";
-  $OUT .= "  RewriteEngine on\n";
-  $OUT .= "  RewriteCond %{REQUEST_FILENAME} !-f\n";
-  $OUT .= "  RewriteCond %{REQUEST_FILENAME} !-d\n";
-  $OUT .= "  RewriteRule ^/\$ /gitweb/gitweb.cgi [PT]\n\n";
+#  $OUT .= "  # Ensure we can browse the repo with http://git.server.com/repo.git\n";
+#  $OUT .= "  # instead of http://git.server.com/?p=repo.git;a=summary.\n";
+#  $OUT .= "  RewriteEngine on\n";
+#  $OUT .= "  RewriteCond %{REQUEST_FILENAME} !-f\n";
+#  $OUT .= "  RewriteCond %{REQUEST_FILENAME} !-d\n";
+#  $OUT .= "  RewriteRule ^/\$ /gitweb/gitweb.cgi [PT]\n\n";
 
 #  $OUT .= "  RewriteCond %{REQUEST_URI} !=/gitweb.*\n";
 #  $OUT .= "  RewriteCond %{REQUEST_FILENAME} !-f\n";
 #  $OUT .= "  RewriteCond %{REQUEST_FILENAME} !-d\n";
-#  $OUT .= "  RewriteRule ^/(.*\\.git/(?!/?(HEAD|info|objects|refs)).*)?\$ /gitweb/gitweb.cgi%{REQUEST_URI} [L,PT]\n";
+#  $OUT .= "  RewriteRule ^/(.*\\.git/(?!/?(HEAD|info|objects|refs)).*)?\$ /gitweb/gitweb.cgi%{REQUEST_URI} [L,PT]\n\n";
   
   $OUT .= "  <Directory $GitWebRoot>\n";
   $OUT .= "    Options        ExecCGI\n";
