@@ -3,6 +3,12 @@
 echo "Enabling the git service ..."
 config setprop git status enabled
 
+echo "Creating repository base directory ..."
+mkdir -p  /home/e-smith/files/git
+chown  admin:www /home/e-smith/files/git
+chmod  770       /home/e-smith/files/git
+chmod  g+s       /home/e-smith/files/git
+
 echo "Installing HTTP template ..."
 rm -f  /etc/e-smith/templates/etc/httpd/conf/httpd.conf/80SubDomainGit
 cp -r  root/etc/e-smith/templates/etc/httpd/conf/httpd.conf/80SubDomainGit /etc/e-smith/templates/etc/httpd/conf/httpd.conf/
