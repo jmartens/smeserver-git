@@ -55,10 +55,12 @@ if ($event eq 'git-repository-create')
   #------------------------------------------------------------
   # Create a bare git repository
   # We add the .git extension to the repository name to indicate 
-  # is a bare repository.
+  # is a bare repository. Permssions are set such that the 
+  # repository is owned by admin and is accessible to the group
+  # www (so Apache can access it) but not anybody else.
   #------------------------------------------------------------
 
-  system("/usr/bin/git", "init", "--bare", "--shared=group", "/home/e-smith/files/git/$gitRepositoryName.git") == 0
+  system("/usr/bin/git", "init", "--bare", "--shared=0660", "/home/e-smith/files/git/$gitRepositoryName.git") == 0
 	  or die "Error creating the initial bare git respository structure for /home/e-smith/files/git/$gitRepositoryName.git";
 
   # Init the Git description 
