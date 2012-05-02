@@ -6,39 +6,49 @@ config setprop git status enabled
 echo "Installing HTTP template ..."
 rm -f  /etc/e-smith/templates/etc/httpd/conf/httpd.conf/80SubDomainGit
 cp -r  root/etc/e-smith/templates/etc/httpd/conf/httpd.conf/80SubDomainGit /etc/e-smith/templates/etc/httpd/conf/httpd.conf/
-chown  -R root:root /etc/e-smith/templates/etc/httpd/conf/httpd.conf/80SubDomainGit
-chmod  444          /etc/e-smith/templates/etc/httpd/conf/httpd.conf/80SubDomainGit
+chown  -R root:admin /etc/e-smith/templates/etc/httpd/conf/httpd.conf/80SubDomainGit
+chmod  544           /etc/e-smith/templates/etc/httpd/conf/httpd.conf/80SubDomainGit
 
 echo "Installing Git repository database library ..."
 cp -f     root/usr/lib/perl5/site_perl/esmith/GitDB.pm /usr/lib/perl5/site_perl/esmith
-chown  -R root:root /usr/lib/perl5/site_perl/esmith/GitDB.pm
-chmod  444          /usr/lib/perl5/site_perl/esmith/GitDB.pm
+chown  -R root:admin /usr/lib/perl5/site_perl/esmith/GitDB.pm
+chmod  644           /usr/lib/perl5/site_perl/esmith/GitDB.pm
 
 echo "Installing server manager FormMagick handler ..."
 cp -f  root/usr/lib/perl5/site_perl/esmith/FormMagick/Panel/git.pm /usr/lib/perl5/site_perl/esmith/FormMagick/Panel
-chown  -R root:root /usr/lib/perl5/site_perl/esmith/FormMagick/Panel/git.pm
-chmod  444          /usr/lib/perl5/site_perl/esmith/FormMagick/Panel/git.pm
+chown  -R root:admin /usr/lib/perl5/site_perl/esmith/FormMagick/Panel/git.pm
+chmod  644           /usr/lib/perl5/site_perl/esmith/FormMagick/Panel/git.pm
+
+echo "Installing server manager FormMagick module  ..."
+cp -f  root/etc/e-smith/web/functions/git /etc/e-smith/web/functions
+chown  -R root:admin /etc/e-smith/web/functions/git
+chmod  755           /etc/e-smith/web/functions/git
+chmod  u+s           /etc/e-smith/web/functions/git
 
 echo "Installing server manager FormMagick language module en-us ..."
 cp -f  root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/git /etc/e-smith/locale/en-us/etc/e-smith/web/functions
-chown  -R root:root /etc/e-smith/locale/en-us/etc/e-smith/web/functions/git
-chmod  444          /etc/e-smith/locale/en-us/etc/e-smith/web/functions/git
+chown  -R root:admin /etc/e-smith/locale/en-us/etc/e-smith/web/functions/git
+chmod  644           /etc/e-smith/locale/en-us/etc/e-smith/web/functions/git
 
 echo "Installing server manager action scripts ..."
 cp -f  root/etc/e-smith/events/actions/git* /etc/e-smith/events/actions
-chown  -R root:root /etc/e-smith/events/actions/git*
-chmod  444          /etc/e-smith/events/actions/git*
+chown  -R root:root  /etc/e-smith/events/actions/git*
+chmod  554           /etc/e-smith/events/actions/git*
 
 echo "Linking events to action scripts ..."
 echo "TBD"
+
+echo "Updating server-manager panel ..."
+/etc/e-smith/events/actions/navigation-conf
 
 echo "Expanding HTTP template ..."
 expand-template     /etc/httpd/conf/httpd.conf
 
 echo "Installing Markdown.pl package ..."
-cp -rf root/usr/share/markdown /usr/shared/markdown/*
-chown  -R root:root /usr/shared/markdown
-chmod  444          /usr/shared/markdown/*
+cp -rf root/usr/share/markdown /usr/share/markdown/*
+chown  -R root:root /usr/share/markdown
+chown  -R root:root /usr/share/markdown/*
+chmod  444          /usr/share/markdown/*
 
 echo "Installing Gitweb resources ..."
 rm -f      /etc/e-smith/web/common/git*
