@@ -51,11 +51,11 @@ die "Invalid event: \"$event\". Expecting \"git-repository-delete\"\n"
 my $repo = $git_db->get($gitRepositoryToDelete) || undef;
 unless ( defined $repo && $repo->prop('type') eq "repository-deleted" )
 {
-  warn "Can't find \"$gitRepositoryToDelete\" in the Git repository database.\n";
+  warn "Can't find \"$gitRepositoryToDelete.git\" in the Git repository database.\n";
   exit (0);
 }
 
-my $dir = "/home/e-smith/files/git/$gitRepositoryToDelete";
+my $dir = "/home/e-smith/files/git/$gitRepositoryToDelete.git";
 
 exit 0 unless ( -d $dir );
 
