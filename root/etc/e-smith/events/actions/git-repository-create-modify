@@ -66,7 +66,7 @@ if ($event eq 'git-repository-create')
   print $file $repository->prop('Description') . "\n"; 
   
   # Create a 'post-update' hook
-  open(my $file, '>', "/home/e-smith/files/git/$gitRepositoryName.git/hooks/post-update");
+  open($file, '>', "/home/e-smith/files/git/$gitRepositoryName.git/hooks/post-update");
   print $file "#!/bin/sh\n" .
               "# Hook script auto generated on repository create by SME server manager. Enables automatic markdown for README.md\n" .
               "# for viewing in gitweb README.html.\n\n" .
