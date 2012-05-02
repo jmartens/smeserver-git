@@ -174,8 +174,8 @@
   $OUT .= "  RewriteRule ^/\$ /gitweb/gitweb.cgi [PT]\n\n";
 
 #  $OUT .= "  RewriteCond %{REQUEST_URI} !=/gitweb.*\n";
-  $OUT .= "  RewriteCond %{REQUEST_FILENAME} !-f\n";
-  $OUT .= "  RewriteCond %{REQUEST_FILENAME} !-d\n";
+#  $OUT .= "  RewriteCond %{REQUEST_FILENAME} !-f\n";
+#  $OUT .= "  RewriteCond %{REQUEST_FILENAME} !-d\n";
 #  $OUT .= "  RewriteRule ^/(.*\\.git/(?!/?(HEAD|info|objects|refs)).*)?\$ /gitweb/gitweb.cgi%{REQUEST_URI} [L,PT]\n";
   
   $OUT .= "  <Directory $GitWebRoot>\n";
