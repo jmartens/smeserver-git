@@ -244,9 +244,9 @@
     # When there are users listed for PULL access, require authentication for everything
     # otherwise only for the PUSH access.
 #    if( $effectiveUsersPull ) {
-#      $OUT .= "  <Location \"/$git_repository.git\">\n";
+      $OUT .= "  <Location \"/$git_repository.git\">\n";
 #    } else {
-      $OUT .= "  <LocationMatch \"^/$git_repository.git/.*git-receive-pack\$\">\n";
+#      $OUT .= "  <LocationMatch \"^/$git_repository.git/.*git-receive-pack\$\">\n";
 #    }
     $OUT .= "    SSLRequireSSL\n";
     
@@ -254,7 +254,7 @@
       $OUT .= "    AuthType      Basic\n";
       $OUT .= "    AuthExternal  pwauth\n";
       $OUT .= "    AuthName      \"Git repository: $git_repository\.git ($properties{'Description'})\"\n";
-      $OUT .= "    Require user  $effectiveUsersPush\n";
+      $OUT .= "    Require user  $effectiveUsersPush $effectiveUsersPull\n";
     }
     $OUT .= "\n";
     $OUT .= "    # Network Access Control\n";
@@ -274,9 +274,9 @@
     $OUT .= "    #  Configured User(s) : '" . ($properties{'UsersPush'}  || "none") . "'\n";
     $OUT .= "\n";
 #    if( $effectiveUsersPull ) {
-#      $OUT .= "  </Location> # $git_repository.git\n\n";
+      $OUT .= "  </Location> # $git_repository.git\n\n";
 #    } else {
-      $OUT .= "  </LocationMatch>  # ^/$git_repository.git/git-receive-pack\$\n\n";
+#      $OUT .= "  </LocationMatch>  # ^/$git_repository.git/git-receive-pack\$\n\n";
 #    }
   }
   $OUT .= "</VirtualHost>\n\n";
