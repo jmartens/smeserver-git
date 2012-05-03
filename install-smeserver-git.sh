@@ -1,62 +1,96 @@
 #!/bin/bash
 
-echo "Enabling the git service ..."
-config setprop git status enabled
+if [ `config getprop git status` != 'enabled' ]
+then
+  echo "Enabling the git service ..."
+  config setprop git status enabled
+fi
 
-echo "Creating repository base directory ..."
-mkdir -p  /home/e-smith/files/git
-chown  admin:www /home/e-smith/files/git
-chmod  770       /home/e-smith/files/git
-chmod  g+s       /home/e-smith/files/git
+if [ ! -d /home/e-smith/files/git ]
+then
+  echo "Creating repository base directory ..."
+  mkdir -p  /home/e-smith/files/git
+  chown  admin:www /home/e-smith/files/git
+  chmod  770       /home/e-smith/files/git
+  chmod  g+s       /home/e-smith/files/git
+fi
+  
+cmp -s root/usr/lib/perl5/site_perl/esmith/GitDB.pm /usr/lib/perl5/site_perl/esmith/GitDB.pm > /dev/null
+if [ $? -ne 0 ]
+then
+  echo "Installing Git repository database library ..."
+  cp -f     root/usr/lib/perl5/site_perl/esmith/GitDB.pm /usr/lib/perl5/site_perl/esmith
+  chown  -R root:admin /usr/lib/perl5/site_perl/esmith/GitDB.pm
+  chmod  644           /usr/lib/perl5/site_perl/esmith/GitDB.pm
+fi
 
-echo "Installing HTTP template ..."
-rm -f  /etc/e-smith/templates/etc/httpd/conf/httpd.conf/80SubDomainGit
-cp -r  root/etc/e-smith/templates/etc/httpd/conf/httpd.conf/80SubDomainGit /etc/e-smith/templates/etc/httpd/conf/httpd.conf/
-chown  -R root:admin /etc/e-smith/templates/etc/httpd/conf/httpd.conf/80SubDomainGit
-chmod  544           /etc/e-smith/templates/etc/httpd/conf/httpd.conf/80SubDomainGit
-
-echo "Installing Git repository database library ..."
-cp -f     root/usr/lib/perl5/site_perl/esmith/GitDB.pm /usr/lib/perl5/site_perl/esmith
-chown  -R root:admin /usr/lib/perl5/site_perl/esmith/GitDB.pm
-chmod  644           /usr/lib/perl5/site_perl/esmith/GitDB.pm
-
-echo "Installing server manager FormMagick handler ..."
-cp -f  root/usr/lib/perl5/site_perl/esmith/FormMagick/Panel/git.pm /usr/lib/perl5/site_perl/esmith/FormMagick/Panel
-chown  -R root:admin /usr/lib/perl5/site_perl/esmith/FormMagick/Panel/git.pm
-chmod  644           /usr/lib/perl5/site_perl/esmith/FormMagick/Panel/git.pm
-
-echo "Installing server manager FormMagick module  ..."
-cp -f  root/etc/e-smith/web/functions/git /etc/e-smith/web/functions
-chown  -R root:admin /etc/e-smith/web/functions/git
-chmod  755           /etc/e-smith/web/functions/git
-chmod  u+s           /etc/e-smith/web/functions/git
-
-echo "Installing server manager FormMagick language module en-us ..."
-cp -f  root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/git /etc/e-smith/locale/en-us/etc/e-smith/web/functions
-chown  -R root:admin /etc/e-smith/locale/en-us/etc/e-smith/web/functions/git
-chmod  644           /etc/e-smith/locale/en-us/etc/e-smith/web/functions/git
+cmp -s root/etc/e-smith/templates/etc/httpd/conf/httpd.conf/80SubDomainGit /etc/e-smith/templates/etc/httpd/conf/httpd.conf/80SubDomainGit > /dev/null
+if [ $? -ne 0 ]
+then
+  echo "Installing HTTP template ..."
+  rm -f  /etc/e-smith/templates/etc/httpd/conf/httpd.conf/80SubDomainGit
+  cp -r  root/etc/e-smith/templates/etc/httpd/conf/httpd.conf/80SubDomainGit /etc/e-smith/templates/etc/httpd/conf/httpd.conf/
+  chown  -R root:admin /etc/e-smith/templates/etc/httpd/conf/httpd.conf/80SubDomainGit
+  chmod  544           /etc/e-smith/templates/etc/httpd/conf/httpd.conf/80SubDomainGit
+  echo "Expanding HTTP template ..."
+  expand-template     /etc/httpd/conf/httpd.conf
+  HTTP_UPDATED=1
+fi
 
 echo "Installing server manager action scripts ..."
 cp -f  root/etc/e-smith/events/actions/git* /etc/e-smith/events/actions
 chown  -R root:root  /etc/e-smith/events/actions/git*
 chmod  554           /etc/e-smith/events/actions/git*
 
+cmp -s root/etc/e-smith/web/functions/git /etc/e-smith/web/functions/git > /dev/null
+if [ $? -ne 0 ]
+then
+  echo "Installing server manager FormMagick module  ..."
+  cp -f  root/etc/e-smith/web/functions/git /etc/e-smith/web/functions
+  chown  -R root:admin /etc/e-smith/web/functions/git
+  chmod  755           /etc/e-smith/web/functions/git
+  chmod  u+s           /etc/e-smith/web/functions/git
+  REGENERATE_PANEL=1
+fi
+
+cmp -s root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/git /etc/e-smith/locale/en-us/etc/e-smith/web/functions/git > /dev/null
+if [ $? -ne 0 ]
+then
+  echo "Installing server manager FormMagick language module en-us ..."
+  cp -f  root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/git /etc/e-smith/locale/en-us/etc/e-smith/web/functions
+  chown  -R root:admin /etc/e-smith/locale/en-us/etc/e-smith/web/functions/git
+  chmod  644           /etc/e-smith/locale/en-us/etc/e-smith/web/functions/git
+  REGENERATE_PANEL=1
+fi
+
+cmp -s root/usr/lib/perl5/site_perl/esmith/FormMagick/Panel/git.pm //usr/lib/perl5/site_perl/esmith/FormMagick/Panel/git.pm > /dev/null
+if [ $? -ne 0 ]
+then
+  echo "Installing server manager FormMagick handler ..."
+  cp -f  root/usr/lib/perl5/site_perl/esmith/FormMagick/Panel/git.pm /usr/lib/perl5/site_perl/esmith/FormMagick/Panel
+  chown  -R root:admin /usr/lib/perl5/site_perl/esmith/FormMagick/Panel/git.pm
+  chmod  644           /usr/lib/perl5/site_perl/esmith/FormMagick/Panel/git.pm
+  REGENERATE_PANEL=1
+fi
+
+if [ $REGENERATE_PANEL ] 
+then
+  echo "Updating server-manager panel ..."
+  /etc/e-smith/events/actions/navigation-conf
+fi
+
 echo "Linking events to action scripts ..."
 echo "TBD"
 
-echo "Updating server-manager panel ..."
-/etc/e-smith/events/actions/navigation-conf
-
-echo "Expanding HTTP template ..."
-expand-template     /etc/httpd/conf/httpd.conf
-
-echo "Installing Markdown.pl package ..."
-
-mkdir -p  /usr/share/markdown
-cp -rf    root/usr/share/markdown/* /usr/share/markdown
-chown  -R root:root /usr/share/markdown
-chown  -R root:root /usr/share/markdown/*
-chmod  444          /usr/share/markdown/*
+if [ ! -d /usr/share/markdown ]
+then
+  echo "Installing Markdown.pl package ..."
+  mkdir -p  /usr/share/markdown
+  cp -rf    root/usr/share/markdown/* /usr/share/markdown
+  chown  -R root:root /usr/share/markdown
+  chown  -R root:root /usr/share/markdown/*
+  chmod  444          /usr/share/markdown/*
+fi
 
 echo "Installing Gitweb resources ..."
 rm -f      /etc/e-smith/web/common/git*
@@ -85,6 +119,13 @@ chmod  444          /etc/e-smith/templates/etc/e-smith/web/common/gitweb_home_te
 echo "Expanding gitweb home text template fragments ..."
 expand-template     /etc/e-smith/web/common/gitweb_home_text.html
 
-echo "Validating httpd.cond syntax and restarting Apache ..."
-/usr/sbin/apachectl -t
-[ $? -eq 0 ] && /etc/init.d/httpd-e-smith restart && less -N /etc/httpd/conf/httpd.conf
+if [ $HTTP_UPDATED ]
+then  
+  echo "Validating httpd.cond syntax and restarting Apache ..."
+  /usr/sbin/apachectl -t
+  if [ $? -eq 0 ]
+  then 
+    /etc/init.d/httpd-e-smith restart
+    less -N /etc/httpd/conf/httpd.conf
+  fi
+fi
