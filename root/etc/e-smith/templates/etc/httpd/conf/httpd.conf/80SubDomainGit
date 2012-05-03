@@ -131,6 +131,7 @@
     $OUT .= "  # Set logging options - mainly for debugging\n";
     $OUT .= "  LogLevel        debug\n";
     $OUT .= "  # for debugging rewrite rules\n";
+#    $OUT .= "  CustomLog       /var/log/httpd/git_log \"h=%h url=%U %l q=%q method=%m status=%>s REMOTE_USER='%\{REMOTE_USER\}i' REDIRECT_REMOTE_USER='%\{REDIRECT_REMOTE_USER\}i' %u %f\" \n";
     $OUT .= "  RewriteLog      /var/log/httpd/rewrite_log\n";
     $OUT .= "  RewriteLogLevel 9\n";
     $OUT .= "\n";
@@ -240,44 +241,56 @@
     $OUT .= "  #  - AccessType          : $properties{'AccessType'} => Network allow $allow\n";
     $OUT .= "  #  - Effective PULL Users: '" . ($effectiveUsersPull || "Anonymous") . "'\n";
     $OUT .= "  #  - Effective PUSH Users: '" . ($effectiveUsersPush || "Anonymous") . "'\n";
-
+    $OUT .= "  # Pull access:\n";
+    $OUT .= "  #  - Configured Group(s) : '" . ($properties{'GroupsPull'} || "none") . "'\n";
+    $OUT .= "  #  - Configured User(s)  : '" . ($properties{'UsersPull'}  || "none") . "'\n";
+    $OUT .= "  # Push access:\n";
+    $OUT .= "  #  - Configured Group(s) : '" . ($properties{'GroupsPush'} || "none") . "'\n";
+    $OUT .= "  #  - Configured User(s)  : '" . ($properties{'UsersPush'}  || "none") . "'\n";
+    
     # When there are users listed for PULL access, require authentication for everything
     # otherwise only for the PUSH access.
-#    if( $effectiveUsersPull ) {
-      $OUT .= "  <Location \"/$git_repository.git\">\n";
-#    } else {
-#      $OUT .= "  <LocationMatch \"^/$git_repository.git/.*git-receive-pack\$\">\n";
-#    }
-    $OUT .= "    SSLRequireSSL\n";
+    $OUT .= "  <Location \"/$git_repository.git\">\n";
+    $OUT .= "    SSLRequireSSL\n\n";
     
-    if( $effectiveUsersPush ) {    
+    if( $effectiveUsersPull ) {    
+      $OUT .= "    # User Access Control\n";
       $OUT .= "    AuthType      Basic\n";
       $OUT .= "    AuthExternal  pwauth\n";
       $OUT .= "    AuthName      \"Git repository: $git_repository\.git ($properties{'Description'})\"\n";
       $OUT .= "    Require user  $effectiveUsersPush $effectiveUsersPull\n";
     }
-    $OUT .= "\n";
+
     $OUT .= "    # Network Access Control\n";
     $OUT .= "    Order         Deny,Allow\n";
     $OUT .= "    Deny          from All\n";
-    $OUT .= "    Allow         from $allow\n";
-    $OUT .= "\n";
-    $OUT .= "    # Network Access Rules AND Basic Auth\n";
-    $OUT .= "    Satisfy       All\n";
-    $OUT .= "\n";
-    $OUT .= "    # Pull access:\n";
-    $OUT .= "    #  Configured Group(s): '" . ($properties{'GroupsPull'} || "none") . "'\n";
-    $OUT .= "    #  Configured User(s) : '" . ($properties{'UsersPull'}  || "none") . "'\n";
-    $OUT .= "\n";
-    $OUT .= "    # Push access:\n";
-    $OUT .= "    #  Configured Group(s): '" . ($properties{'GroupsPush'} || "none") . "'\n";
-    $OUT .= "    #  Configured User(s) : '" . ($properties{'UsersPush'}  || "none") . "'\n";
-    $OUT .= "\n";
-#    if( $effectiveUsersPull ) {
-      $OUT .= "  </Location> # $git_repository.git\n\n";
-#    } else {
-#      $OUT .= "  </LocationMatch>  # ^/$git_repository.git/git-receive-pack\$\n\n";
-#    }
+    $OUT .= "    Allow         from $allow\n\n";
+    
+    if( $effectiveUsersPull ) {    
+      $OUT .= "    # Need both Network AND User access rules\n";
+      $OUT .= "    Satisfy       All\n\n";
+    }
+    
+    $OUT .= "  </Location> # $git_repository.git\n\n";
+
+    # When there are users listed for PULL access, require authentication for everything
+    # otherwise only for the PUSH access.
+    if( $effectiveUsersPush ) {
+      $OUT .= "  <LocationMatch \"^/$git_repository.git*git-receive-pack\$\">\n";
+      $OUT .= "    SSLRequireSSL\n\n";
+      $OUT .= "    # User Access Control\n";
+      $OUT .= "    AuthType      Basic\n";
+      $OUT .= "    AuthExternal  pwauth\n";
+      $OUT .= "    AuthName      \"Git repository: $git_repository\.git ($properties{'Description'})\"\n";
+      $OUT .= "    Require user  $effectiveUsersPush\n\n";
+      $OUT .= "    # Network Access Control\n";
+      $OUT .= "    Order         Deny,Allow\n";
+      $OUT .= "    Deny          from All\n";
+      $OUT .= "    Allow         from $allow\n\n";
+      $OUT .= "    # Need both Network AND User access rules\n";
+      $OUT .= "    Satisfy       All\n";
+      $OUT .= "  </LocationMatch>  # ^/$git_repository.git/git-receive-pack\$\n\n";
+    }
   }
   $OUT .= "</VirtualHost>\n\n";
 }
