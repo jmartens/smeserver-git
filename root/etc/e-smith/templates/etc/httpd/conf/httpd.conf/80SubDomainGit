@@ -237,19 +237,12 @@
     my $effectiveUsersPull = $git_db->effective_users_list_from( $properties{'GroupsPull'},  
                                                                  $properties{'UsersPull'} ); 
 
+    $OUT .= "  # ~~~~~~~~~~~~~~~~~~~~~~~~\n";
     $OUT .= "  # Git Repository         : $git_repository.git ($properties{'Description'})\n";
     $OUT .= "  #  - AccessType          : $properties{'AccessType'} => Network allow $allow\n";
-    $OUT .= "  #  - Effective PULL Users: '" . ($effectiveUsersPull || "Anonymous") . "'\n";
-    $OUT .= "  #  - Effective PUSH Users: '" . ($effectiveUsersPush || "Anonymous") . "'\n";
-    $OUT .= "  # Pull access:\n";
-    $OUT .= "  #  - Configured Group(s) : '" . ($properties{'GroupsPull'} || "none") . "'\n";
-    $OUT .= "  #  - Configured User(s)  : '" . ($properties{'UsersPull'}  || "none") . "'\n";
-    $OUT .= "  # Push access:\n";
-    $OUT .= "  #  - Configured Group(s) : '" . ($properties{'GroupsPush'} || "none") . "'\n";
-    $OUT .= "  #  - Configured User(s)  : '" . ($properties{'UsersPush'}  || "none") . "'\n";
+    $OUT .= "  #  - Effective PULL Users: '" . ($effectiveUsersPull || "Anonymous") . "' <= (" . ($properties{'GroupsPull'} || "none") . "/" . ($properties{'UsersPull'}  || "none") . ")\n";
+    $OUT .= "  #  - Effective PUSH Users: '" . ($effectiveUsersPush || "Anonymous") . "' <= (" . ($properties{'GroupsPush'} || "none") . "/" . ($properties{'UsersPush'}  || "none") . ")\n";
     
-    # When there are users listed for PULL access, require authentication for everything
-    # otherwise only for the PUSH access.
     $OUT .= "  <Location \"/$git_repository.git\">\n";
     $OUT .= "    SSLRequireSSL\n\n";
     
@@ -258,7 +251,7 @@
       $OUT .= "    AuthType      Basic\n";
       $OUT .= "    AuthExternal  pwauth\n";
       $OUT .= "    AuthName      \"Git repository: $git_repository\.git ($properties{'Description'})\"\n";
-      $OUT .= "    Require user  $effectiveUsersPush $effectiveUsersPull\n";
+      $OUT .= "    Require user  $effectiveUsersPush $effectiveUsersPull\n\n";
     }
 
     $OUT .= "    # Network Access Control\n";
@@ -288,7 +281,7 @@
       $OUT .= "    Deny          from All\n";
       $OUT .= "    Allow         from $allow\n\n";
       $OUT .= "    # Need both Network AND User access rules\n";
-      $OUT .= "    Satisfy       All\n";
+      $OUT .= "    Satisfy       All\n\n";
       $OUT .= "  </LocationMatch>  # ^/$git_repository.git/git-receive-pack\$\n\n";
     }
   }
