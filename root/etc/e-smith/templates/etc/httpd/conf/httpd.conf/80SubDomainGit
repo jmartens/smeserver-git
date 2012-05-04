@@ -61,13 +61,13 @@
   my $user_repositories = $git{'UserRepositories'} || "disabled";
     
   # Open additional databases for configuring individual repositories  
-  my $networks_db = esmith::NetworksDB->open or
+  my $networks_db = esmith::NetworksDB->open_ro() or
     die "Couldn't open NetworksDB\n";
     
-  my $accounts_db = esmith::AccountsDB->open or
+  my $accounts_db = esmith::AccountsDB->open_ro() or
     die "Couldn't open AccountsDB\n";
   
-  my $git_db = esmith::GitDB->open or
+  my $git_db = esmith::GitDB->open_ro() or
     die "Couldn't open GitDB\n";
 
   # Setup access permissions for webgit viewing  
@@ -131,7 +131,6 @@
     $OUT .= "  # Set logging options - mainly for debugging\n";
     $OUT .= "  LogLevel        debug\n";
     $OUT .= "  # for debugging rewrite rules\n";
-#    $OUT .= "  CustomLog       /var/log/httpd/git_log \"h=%h url=%U %l q=%q method=%m status=%>s REMOTE_USER='%\{REMOTE_USER\}i' REDIRECT_REMOTE_USER='%\{REDIRECT_REMOTE_USER\}i' %u %f\" \n";
     $OUT .= "  RewriteLog      /var/log/httpd/rewrite_log\n";
     $OUT .= "  RewriteLogLevel 9\n";
     $OUT .= "\n";
@@ -139,17 +138,22 @@
   
   $OUT .= "  # Setup password authentication method\n";
   $OUT .= "  AddExternalAuth       pwauth /usr/lib/httpd/modules/pwauth\n";
-  $OUT .= "  SetExternalAuthMethod pwauth pipe\n";
-  $OUT .= "\n";
+  $OUT .= "  SetExternalAuthMethod pwauth pipe\n\n";
+
   $OUT .= "  # Load configuration for Gitweb\n";
-  $OUT .= "  SetEnv GITWEB_CONFIG /etc/gitweb.conf\n";
-  $OUT .= "\n";
+  $OUT .= "  SetEnv GITWEB_CONFIG /etc/gitweb.conf\n\n";
+  
   $OUT .= "  # Configure Git HTTP Backend\n";
   $OUT .= "  SetEnv GIT_PROJECT_ROOT $GitRepositoryRoot\n";
   $OUT .= "  SetEnv GIT_HTTP_EXPORT_ALL\n";
-  $OUT .= "  SetEnv REMOTE_USER=\$REDIRECT_REMOTE_USER\n"; 
-  $OUT .= "\n";
+  $OUT .= "  SetEnv REMOTE_USER REDIRECT_REMOTE_USER\n\n"; 
 
+  $OUT .= "  # If HTTP:Authorization was send in the request, ensure we make it\n";
+  $OUT .= "  # available in the HTTP_AUTHORIZATION environment variable.\n";
+  $OUT .= "  RewriteEngine on\n";
+  $OUT .= "  RewriteCond %\{HTTP:Authorization\} ^(.+)\n";
+  $OUT .= "  RewriteRule .? - [e=HTTP_AUTHORIZATION:%1]\n\n";
+  
   $OUT .= "  # We use ScriptAliasMatch to match those URLs \n";
   $OUT .= "  # that git-http-backend can handle, and forward the rest to gitweb\n";
   $OUT .= "  ScriptAliasMatch \\\n";

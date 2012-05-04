@@ -1,0 +1,25 @@
+
+####
+# Authentication Error Magic:
+sub auth_error \{
+  my $status = shift;
+  my $error = esc_html(shift);
+
+  my $headers = \{ -type => $content_type,
+                  -charset => 'utf-8',
+                  -status => $status \};
+  $headers->\{"WWW-Authenticate"\} = 'Basic realm="Git Repositories"' if ($status =~ /^401/);
+                    
+  print $cgi->header($headers);
+  git_header_html(undef, undef, -no_http_header => 1);
+  print "<div class=\"index_include\"><br /><br />";
+  print "$status - <b>Error:</b> $error";
+  print "<br />";
+  if ($cgi->param("reqauth") && $status =~ /^401/) \{
+    print '<a href="?">Click here</a> to retry without authentication<br />';
+  \}
+  print "</div>";
+  git_footer_html();
+  goto DONE_GITWEB;
+\};
+

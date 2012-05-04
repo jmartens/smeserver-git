@@ -1,0 +1,13 @@
+
+####
+# Extra code to run for each request
+$per_request_config = sub \{
+  our $cgi;
+
+  # If "reqauth" parameter is set, send back a 401 if there's no auth
+  if ($cgi->param("reqauth") and not defined $ENV\{"HTTP_AUTHORIZATION"\}) \{
+    auth_error("401 Unauthorized",
+               "You wanted to provide authorization, so I asked for it.");
+  \}
+\};
+

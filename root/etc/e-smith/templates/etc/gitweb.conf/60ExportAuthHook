@@ -1,0 +1,58 @@
+
+####
+# Install a export authorisation hook to ensure Gitweb only list thise projects that the user
+# is authorised to see.
+
+use esmith::NetworksDB;
+use esmith::GitDB;
+use MIME::Base64;
+use NetAddr::IP;
+
+$export_auth_hook = sub \{
+  my $projectdir = shift;
+  
+  my $export_allowed = 0; # Must be 1 to show in gitweb.
+  my $local_request = 0;  # Will be 1 when the request is from the local network.
+
+  if($projectdir =~ (/(.*?)\.git/)) \{
+    my $projectname = basename($1);
+
+    # Check if the request is from a local IP address for this host
+    my $networks_db = esmith::NetworksDB->open_ro() or
+      die "Could not open the networks database!\n";
+    my @network_setting = split(/[\/ ]/, $networks_db->local_access_spec('private'));
+    my $remote_addr = NetAddr::IP->new( $ENV\{'REMOTE_ADDR'\} );
+    if( $remote_addr->within( new NetAddr::IP @network_setting[1], @network_setting[2] ) ) \{
+      $local_request = 1;
+    \}
+    
+    # Retrieve project properties from database
+    my $git_db = esmith::GitDB->open_ro() or
+      die "Could not open the Git repository database!\n";
+    my $repository = $git_db->get($projectname) or 
+      die "The git repository '$projectname' does not seem to exist in the Git repository database!\n";
+    my %properties = $repository->props;  
+
+    if( $ENV\{'HTTP_AUTHORIZATION'\} ) \{
+      my @http_authorisation = split(/ /, $ENV\{'HTTP_AUTHORIZATION'\} );
+      my @http_digest = split( /:/, decode_base64( @http_authorisation[1] ) );
+      if( @http_digest[0] = 'nobody' ) \{
+        #die "User '@http_digest[0]' Password '@http_digest[1]' @network_setting[0]-@network_setting[1]-@network_setting[2] \n";
+      \}
+    \}
+    
+    # Check the configured access permissions. 
+    if ($properties\{'AccessType'\}) \{
+      if ($properties\{'AccessType'\} eq 'global') \{
+        $export_allowed = 1;
+      \} elsif (($properties\{'AccessType'\} eq 'private') && ($local_request))\{
+        $export_allowed = 1;
+      \} elsif (($properties\{'AccessType'\} eq 'local') && ($local_request))\{
+        $export_allowed = 1;
+      \} else \{
+        $export_allowed = 0;
+      \}
+    \}
+  \}
+  return $export_allowed;
+\};
