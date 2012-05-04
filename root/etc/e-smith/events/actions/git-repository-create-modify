@@ -77,6 +77,7 @@ if ($event eq 'git-repository-create')
               "[ \$? -eq 0 ] && git cat-file blob HEAD:README.md | perl /usr/share/markdown/Markdown.pl --html4tags > README.html\n\n" .
               "git update-server-info\n";
   close($file);
+  chmod 0770, "/home/e-smith/files/git/$gitRepositoryName.git/hooks/post-update";
 }
 elsif ($event eq 'git-repository-modify')
 {
