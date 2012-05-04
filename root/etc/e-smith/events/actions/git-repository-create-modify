@@ -71,10 +71,14 @@ if ($event eq 'git-repository-create')
   open($file, '>', "/home/e-smith/files/git/$gitRepositoryName.git/hooks/post-update");
   print $file "#!/bin/sh\n" .
               "# Hook script auto generated on repository create by SME server manager. Enables automatic markdown for README.md\n" .
-              "# for viewing in gitweb README.html.\n\n" .
+              "# for viewing in gitweb as README.html.\n\n" .
               "rm -f README.html\n" .
               "git cat-file -e HEAD:README.md > /dev/null 2>&1\n" .
-              "[ \$? -eq 0 ] && git cat-file blob HEAD:README.md | perl /usr/share/markdown/Markdown.pl --html4tags > README.html\n\n" .
+              "if [ \$? -eq 0 ]; then\n" .
+              "  git cat-file blob HEAD:README.md | perl /usr/share/markdown/Markdown.pl --html4tags > README.html\n" .
+              "  chmod 0440 README.html\n" .
+              "fi\n\n" .
+              "# Update GIT server info as well\n" .
               "git update-server-info\n";
   close($file);
   chmod 0770, "/home/e-smith/files/git/$gitRepositoryName.git/hooks/post-update";
