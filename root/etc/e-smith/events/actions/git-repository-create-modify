@@ -103,7 +103,7 @@ elsif ($event eq 'git-repository-modify')
 #------------------------------------------------------------
 # Default for both create and modify is to fix the ownership
 # to allow the webserver access to the repository
-# Ensure that files created are with the www group.
+# Ensure that files created are with gid set for the www group.
 #------------------------------------------------------------
 
 chdir "/home/e-smith/files/git/$gitRepositoryName.git"
@@ -112,4 +112,4 @@ chdir "/home/e-smith/files/git/$gitRepositoryName.git"
 system("/bin/chown", "-R", "admin:www", "/home/e-smith/files/git/$gitRepositoryName.git") == 0
   or die "Could not change ownership of /home/e-smith/files/git/$gitRepositoryName.git";
 
-chmod 2770, ".";
+chmod 02770, ".";
