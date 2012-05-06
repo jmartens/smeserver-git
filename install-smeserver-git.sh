@@ -4,6 +4,7 @@ if [ `config getprop git status` != 'enabled' ]
 then
   echo "Enabling the git service ..."
   config setprop git status enabled
+  HTTP_UPDATED=1
 fi
 
 if [ ! -d /home/e-smith/files/git ]
@@ -32,8 +33,6 @@ then
   cp -r  root/etc/e-smith/templates/etc/httpd/conf/httpd.conf/80SubDomainGit /etc/e-smith/templates/etc/httpd/conf/httpd.conf/
   chown  -R root:admin /etc/e-smith/templates/etc/httpd/conf/httpd.conf/80SubDomainGit
   chmod  544           /etc/e-smith/templates/etc/httpd/conf/httpd.conf/80SubDomainGit
-  echo "Expanding HTTP template ..."
-  expand-template     /etc/httpd/conf/httpd.conf
   HTTP_UPDATED=1
 fi
 
@@ -121,6 +120,9 @@ expand-template     /etc/e-smith/web/common/gitweb_home_text.html
 
 if [ $HTTP_UPDATED ]
 then  
+  echo "Expanding HTTP template ..."
+  expand-template     /etc/httpd/conf/httpd.conf
+
   echo "Validating httpd.cond syntax and restarting Apache ..."
   /usr/sbin/apachectl -t
   if [ $? -eq 0 ]
