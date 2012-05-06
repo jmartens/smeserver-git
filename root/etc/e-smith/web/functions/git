@@ -67,17 +67,17 @@ __DATA__
 
     <field 
       type="radio" 
-      id="access_type" 
-      options="'global', 'private', 'local'"
+      id="allow_access_from" 
+      options="'local', 'internet'"
       validation="validate_radio">
-      <label>GIT_LABEL_ACCESS</label>
+      <label>GIT_LABEL_ALLOW_ACCESS_FROM</label>
     </field>
 
     <subroutine src="print_privileges()" />
 
     <field 
       type="select" 
-      id="groupsPull" 
+      id="pull_groups" 
       options="git_repository_group_list()" 
       multiple="1" size="5">
       <label>GIT_PRIVILEGES_GROUPS_PULL</label>
@@ -85,7 +85,7 @@ __DATA__
 
     <field 
       type="select" 
-      id="usersPull" 
+      id="pull_users" 
       options="git_repository_user_list()" 
       multiple="1" size="5">
       <label>GIT_PRIVILEGES_USERS_PULL</label>
@@ -93,7 +93,7 @@ __DATA__
     
     <field 
       type="select" 
-      id="groupsPush" 
+      id="push_groups" 
       options="git_repository_group_list()" 
       multiple="1" size="5">
       <label>GIT_PRIVILEGES_GROUPS_PUSH</label>
@@ -101,7 +101,7 @@ __DATA__
     
     <field 
       type="select" 
-      id="usersPush" 
+      id="push_users" 
       options="git_repository_user_list()" 
       multiple="1" size="5">
       <label>GIT_PRIVILEGES_USERS_PUSH</label>
@@ -112,14 +112,14 @@ __DATA__
 
   <!-- page 2 -->
   <page 
-	  name="GitRemove" 
+    name="GitRemove" 
     pre-event="turn_off_buttons()" 
-	  post-event="git_repository_handle_remove()">
+    post-event="git_repository_handle_remove()">
         
-	  <title>GIT_REMOVE_TITLE</title>
+    <title>GIT_REMOVE_TITLE</title>
     <description>GIT_REMOVE_DESCRIPTION</description>
     
-	  <subroutine src="print_button('GIT_REMOVE_BUTTON')" />
+    <subroutine src="print_button('GIT_REMOVE_BUTTON')" />
   </page>
 
 </form>

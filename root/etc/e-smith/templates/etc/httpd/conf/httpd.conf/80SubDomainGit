@@ -53,8 +53,8 @@
   return "    # no hostname or domain for git defined\n"
     if $domain eq 'disabled';
 
-  my $access = $git{'access'} || "disabled";
-  return "    # no access setting for git defined\n"
+  my $access = $git{'allow_access_from'} || "disabled";
+  return "    # no network access setting for git defined\n"
     if $access eq 'disabled';
 
   my $debugging         = $git{'debugging'}        || "disabled";
@@ -71,18 +71,14 @@
     die "Couldn't open GitDB\n";
 
   # Setup access permissions for webgit viewing  
-  my $gitweb_allow;
+  my $gitweb_allow = '127.0.0.1'; # Catch incorrect values, including empty ones
   # Setup the rules from which address range we allow access
-  if ($git{'AccessType'}) {
-    if ($git{'AccessType'} eq 'global') {
+  if ($git{'allow_access_from'}) {
+    if ($git{'allow_access_from'} eq 'internet') {
       $gitweb_allow = 'All';
-    } elsif ($git{'AccessType'} eq 'private') {
-      $gitweb_allow = join (' ', ($localAccess, $externalSSLAccess)) ;
-    } elsif ($git{'AccessType'} eq 'local') {
+    } elsif ($git{'allow_access_from'} eq 'local') {
       $gitweb_allow = $localAccess;
-    } else {
-      $gitweb_allow = '127.0.0.1'; # Catch incorrect values, including empty ones
-    }
+    } 
   }
     
   my $GitWebRoot        = "/usr/share/gitweb";
@@ -188,14 +184,14 @@
   $OUT .= "    AddHandler     cgi-script .cgi\n";
   $OUT .= "    DirectoryIndex gitweb.cgi\n";
   $OUT .= "    Order          allow,deny\n";
-  $OUT .= "    Allow from     All\n";
+  $OUT .= "    Allow from     $gitweb_allow\n";
   $OUT .= "  </Directory>\n\n";
 
   $OUT .= "  <Directory /etc/e-smith/web/common>\n";
   $OUT .= "    Options        ExecCGI\n";
   $OUT .= "    AllowOverride  None\n";
   $OUT .= "    Order          allow,deny\n";
-  $OUT .= "    Allow from     All\n";
+  $OUT .= "    Allow from     $gitweb_allow\n";
   $OUT .= "  </Directory>\n\n";
 
   $OUT .= "  <Directory $GitRepositoryRoot>\n";
@@ -218,52 +214,47 @@
   {
     my $git_repository          = $repository->key;
     my %properties              = $repository->props;
-  
-    my $allow;
-    my $satisfy                 = 'All';
     
     # Retrieve the access rules for the repository
-    if ($properties{'AccessType'}) {
-      if ($properties{'AccessType'} eq 'global') {
-        $allow = 'All';
-      } elsif ($properties{'AccessType'} eq 'private') {
-        $allow = join (' ', ($localAccess, $externalSSLAccess)) ;
-      } elsif ($properties{'AccessType'} eq 'local') {
-        $allow = $localAccess;
-      } else {
-        $allow = '127.0.0.1'; # Catch incorrect values, including empty ones
-      }
+    my $satisfy                 = 'All';
+    my $allow_from_network = '127.0.0.1'; # Catch incorrect values, including empty ones
+    if ($properties{'allow_access_from'}) {
+      if ($properties{'allow_access_from'} eq 'internet') {
+        $allow_from_network = 'All';
+      } elsif ($properties{'allow_access_from'} eq 'local') {
+        $allow_from_network = $localAccess;
+      } 
     }
 
     # Determine the effective users list from the listed groups and individual users
-    my $effectiveUsersPush = $git_db->effective_users_list_from( $properties{'GroupsPush'}, 
-                                                                 $properties{'UsersPush'} ); 
-    my $effectiveUsersPull = $git_db->effective_users_list_from( $properties{'GroupsPull'},  
-                                                                 $properties{'UsersPull'} ); 
+    my $effective_push_users = $git_db->effective_users_list_from( $properties{'push_groups'}, 
+                                                                   $properties{'push_users'} ); 
+    my $effective_pull_users = $git_db->effective_users_list_from( $properties{'pull_groups'},  
+                                                                   $properties{'pull_users'} ); 
 
     $OUT .= "  # ~~~~~~~~~~~~~~~~~~~~~~~~\n";
-    $OUT .= "  # Git Repository         : $git_repository.git ($properties{'Description'})\n";
-    $OUT .= "  #  - AccessType          : $properties{'AccessType'} => Network allow $allow\n";
-    $OUT .= "  #  - Effective PULL Users: '" . ($effectiveUsersPull || "Anonymous") . "' <= (" . ($properties{'GroupsPull'} || "none") . "/" . ($properties{'UsersPull'}  || "none") . ")\n";
-    $OUT .= "  #  - Effective PUSH Users: '" . ($effectiveUsersPush || "Anonymous") . "' <= (" . ($properties{'GroupsPush'} || "none") . "/" . ($properties{'UsersPush'}  || "none") . ")\n";
+    $OUT .= "  # Git Repository         : $git_repository.git (" . ($properties{'description'} || "ERROR - NOT CONFIGURED") . ")\n";
+    $OUT .= "  #  - Allow access from   : " . ($properties{'allow_access_from'} || "ERROR - NOT CONFIGURED") . " => Network allow from $allow_from_network\n";
+    $OUT .= "  #  - Effective PULL Users: '" . ($effective_pull_users || "Anonymous") . "' <= (" . ($properties{'pull_groups'} || "none") . "/" . ($properties{'pull_users'}  || "none") . ")\n";
+    $OUT .= "  #  - Effective PUSH Users: '" . ($effective_push_users || "Anonymous") . "' <= (" . ($properties{'push_groups'} || "none") . "/" . ($properties{'push_users'}  || "none") . ")\n";
     
     $OUT .= "  <Location \"/$git_repository.git\">\n";
     $OUT .= "    SSLRequireSSL\n\n";
     
-    if( $effectiveUsersPull ) {    
+    if( $effective_pull_users ) {    
       $OUT .= "    # User Access Control\n";
       $OUT .= "    AuthType      Basic\n";
       $OUT .= "    AuthExternal  pwauth\n";
-      $OUT .= "    AuthName      \"Git repository: $git_repository\.git ($properties{'Description'})\"\n";
-      $OUT .= "    Require user  $effectiveUsersPush $effectiveUsersPull\n\n";
+      $OUT .= "    AuthName      \"Git repository: $git_repository\.git ($properties{'description'})\"\n";
+      $OUT .= "    Require user  $effective_push_users $effective_pull_users\n\n";
     }
 
     $OUT .= "    # Network Access Control\n";
     $OUT .= "    Order         Deny,Allow\n";
     $OUT .= "    Deny          from All\n";
-    $OUT .= "    Allow         from $allow\n\n";
+    $OUT .= "    Allow         from $allow_from_network\n\n";
     
-    if( $effectiveUsersPull ) {    
+    if( $effective_pull_users ) {    
       $OUT .= "    # Need both Network AND User access rules\n";
       $OUT .= "    Satisfy       All\n\n";
     }
@@ -272,18 +263,18 @@
 
     # When there are users listed for PULL access, require authentication for everything
     # otherwise only for the PUSH access.
-    if( $effectiveUsersPush ) {
+    if( $effective_push_users ) {
       $OUT .= "  <LocationMatch \"^/$git_repository.git*git-receive-pack\$\">\n";
       $OUT .= "    SSLRequireSSL\n\n";
       $OUT .= "    # User Access Control\n";
       $OUT .= "    AuthType      Basic\n";
       $OUT .= "    AuthExternal  pwauth\n";
-      $OUT .= "    AuthName      \"Git repository: $git_repository\.git ($properties{'Description'})\"\n";
-      $OUT .= "    Require user  $effectiveUsersPush\n\n";
+      $OUT .= "    AuthName      \"Git repository: $git_repository\.git ($properties{'description'})\"\n";
+      $OUT .= "    Require user  $effective_push_users\n\n";
       $OUT .= "    # Network Access Control\n";
       $OUT .= "    Order         Deny,Allow\n";
       $OUT .= "    Deny          from All\n";
-      $OUT .= "    Allow         from $allow\n\n";
+      $OUT .= "    Allow         from $allow_from_network\n\n";
       $OUT .= "    # Need both Network AND User access rules\n";
       $OUT .= "    Satisfy       All\n\n";
       $OUT .= "  </LocationMatch>  # ^/$git_repository.git/git-receive-pack\$\n\n";

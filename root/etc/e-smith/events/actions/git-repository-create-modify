@@ -48,7 +48,7 @@ my $repository = $git_db->get($gitRepositoryName) or
 die "'$gitRepositoryName' is not an Git repository; git-repository-modify event failed.\n"
   unless ($repository->prop('type') eq 'repository');
 
-my $description = $repository->prop('Description');  
+my $description = $repository->prop('description');  
   
 if ($event eq 'git-repository-create')
 {
@@ -65,7 +65,7 @@ if ($event eq 'git-repository-create')
 
   # Init the Git description 
   open(my $file, '>', "/home/e-smith/files/git/$gitRepositoryName.git/description");
-  print $file $repository->prop('Description') . "\n"; 
+  print $file $repository->prop('description') . "\n"; 
   
   # Create a 'post-update' hook
   open($file, '>', "/home/e-smith/files/git/$gitRepositoryName.git/hooks/post-update");
@@ -91,7 +91,7 @@ elsif ($event eq 'git-repository-modify')
   
   # Update the Git description to match the setting in the server-manager interface
   open(my $file, '>', "/home/e-smith/files/git/$gitRepositoryName.git/description");
-  print $file $repository->prop('Description') . "\n"; 
+  print $file $repository->prop('description') . "\n"; 
   
   # Run git-update-server-info
   chdir "/home/e-smith/files/git/$gitRepositoryName.git"

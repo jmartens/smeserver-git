@@ -42,12 +42,10 @@ $export_auth_hook = sub \{
     \}
     
     # Check the configured access permissions. 
-    if ($properties\{'AccessType'\}) \{
-      if ($properties\{'AccessType'\} eq 'global') \{
+    if ($properties\{'allow_access_from'\}) \{
+      if ($properties\{'allow_access_from'\} eq 'internet') \{
         $export_allowed = 1;
-      \} elsif (($properties\{'AccessType'\} eq 'private') && ($local_request))\{
-        $export_allowed = 1;
-      \} elsif (($properties\{'AccessType'\} eq 'local') && ($local_request))\{
+      \} elsif (($properties\{'allow_access_from'\} eq 'local') && ($local_request))\{
         $export_allowed = 1;
       \} else \{
         $export_allowed = 0;

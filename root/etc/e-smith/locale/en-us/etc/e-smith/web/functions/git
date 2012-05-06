@@ -81,8 +81,48 @@ characters.</trans>
   </entry>
 
   <entry>
-    <base>GIT_LABEL_ACCESS</base>
-    <trans>Access type</trans>
+    <base>GIT_LABEL_ALLOW_ACCESS_FROM</base>
+    <trans>Allow repository access from</trans>
+  </entry>
+
+  <entry>
+    <base>GIT_REPOSITORY_NAME</base>
+    <trans>Repository Name</trans>
+  </entry>
+
+  <entry>
+    <base>GIT_ALLOW_FROM</base>
+    <trans>Allow from</trans>
+  </entry>
+  
+  <entry>
+    <base>GIT_PULL_ACCESS</base>
+    <trans>Pull Access</trans>
+  </entry>
+
+  <entry>
+    <base>GIT_PUSH_ACCESS</base>
+    <trans>Push Access</trans>
+  </entry>
+
+  <entry>
+    <base>GIT_ANONYMOUS</base>
+    <trans>Anonymous</trans>
+  </entry>
+  
+  <entry>
+    <base>GIT_ACCESS_ALLOWED_FROM_LOCAL</base>
+    <trans>Local Network Only</trans>
+  </entry>
+
+  <entry>
+    <base>GIT_ACCESS_ALLOWED_FROM_INTERNET</base>
+    <trans>Internet</trans>
+  </entry>
+
+  <entry>
+    <base>GIT_ACCESS_ALLOWED_FROM_CONFIG_ERROR</base>
+    <trans>Configuration Error!</trans>
   </entry>
 
   <entry>
