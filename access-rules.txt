@@ -1,5 +1,23 @@
 This document documents the various access rules and how they are supposed to work:
 
+configuration database:
+
+  status           :  [enabled|diabled]
+  description      :  text
+  allow_access_from:  [local|internet]
+
+git database:
+
+  type             :  repository
+  description      :  text
+  pull_groups      :  comma separated list of groups with pull permissions
+  pull_users       :  comma separated list of users with pull permissions
+  push_groups      :  comma separated list of groups with push permissions
+  push_users       :  comma separated list of users with push permissions
+
+The system collects an effective list of users from combining the groups and
+users. If the effective list of users, access is allowed as Anonymous.
+
 Allow Access From
 =================
 - Select from local & internet
