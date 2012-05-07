@@ -8,6 +8,7 @@ configuration database:
 
 git database:
 
+  entry name       :  name of git repository without the .git extension
   type             :  repository
   description      :  text
   pull_groups      :  comma separated list of groups with pull permissions
@@ -16,7 +17,19 @@ git database:
   push_users       :  comma separated list of users with push permissions
 
 The system collects an effective list of users from combining the groups and
-users. If the effective list of users, access is allowed as Anonymous.
+users. If the effective list of users is empty, access is allowed as Anonymous.
+
+Example:
+
+# db git show smeserver-git
+smeserver-git=repository
+    allow_access_from=internet
+    description=SME Server GIT Integration
+    pull_groups=
+    pull_users=
+    push_groups=staff
+    push_users=
+
 
 Allow Access From
 =================
