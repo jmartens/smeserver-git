@@ -467,7 +467,7 @@ sub git_repository_handle_create {
   
   if (my $repository = $git_db->new_record($repositoryName, 
        {
-          Description       => $self->cgi->param('description'),
+          description       => $self->cgi->param('description'),
           pull_groups       => "$groups_allowed_to_pull",
           pull_users        => "$users_allowed_to_pull",
           push_groups       => "$groups_allowed_to_push",
@@ -552,7 +552,7 @@ sub git_respository_handle_modify {
 
   if (my $repository = $git_db->get($repositoryName)) {
     if ($repository->prop('type') eq 'repository') {
-      $repository->merge_props( Description       => $self->cgi->param('description'),
+      $repository->merge_props( description       => $self->cgi->param('description'),
                                 pull_groups       => "$groups_allowed_to_pull",
                                 pull_users        => "$users_allowed_to_pull",
                                 push_groups       => "$groups_allowed_to_push",
