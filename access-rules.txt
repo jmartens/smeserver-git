@@ -1,34 +1,46 @@
 This document documents the various access rules and how they are supposed to work:
 
-Access Type: global
-===================
-- Publicly available clone and gitweb view from the Internet
-- Authenticated HTTPS access is required for write access
+configuration database:
 
-Access Type: private
-====================
-- The local network has normal access
-- Authenticated HTTPS is available from the Internet
+  status           :  [enabled|diabled]
+  description      :  text
+  allow_access_from:  [local|internet]
 
-Access Type: local
-==================
-- Only the local network has full access
+git database:
 
-ForceSSL
-========
-- HTTP access is automatically redirected to HTTPS access
+  entry name       :  name of git repository without the .git extension
+  type             :  repository
+  description      :  text
+  pull_groups      :  comma separated list of groups with pull permissions
+  pull_users       :  comma separated list of users with pull permissions
+  push_groups      :  comma separated list of groups with push permissions
+  push_users       :  comma separated list of users with push permissions
 
-Authentication Required
-=======================
-- A user / password is required for any access
-- This also forces HTTPS access
+The system collects an effective list of users from combining the groups and
+users. If the effective list of users is empty, access is allowed as Anonymous.
 
-Read Users
+Example:
+
+# db git show smeserver-git
+smeserver-git=repository
+    allow_access_from=internet
+    description=SME Server GIT Integration
+    pull_groups=
+    pull_users=
+    push_groups=staff
+    push_users=
+
+
+Allow Access From
+=================
+- Select from local & internet
+
+Pull Users
 ==========
 - Users that have read access to the repository
 - When there are no users selected for read access the access is anonymous
 
-Write Users
-===========
+Push Users
+==========
 - Users that have write access to the repository
 - When there are no users selected for write access the access is anonymous?
