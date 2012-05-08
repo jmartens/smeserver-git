@@ -260,11 +260,10 @@
         $OUT .= "    Satisfy       All\n";
       }
     } else { 
-      # Anonymous pulls 
       $OUT .= "\n    # Anonymous Pull / Authenticated Push Access Control\n";
-      $OUT .= "    Order         Deny,Allow\n";
+      $OUT .= "    Order         Allow,Deny\n";
+      $OUT .= "    Allow         from $allow_from_network\n";
       $OUT .= "    Deny          from env=AUTHORIZATION_REQUIRED\n";
-#      $OUT .= "    Allow         from All\n";
       $OUT .= "    Satisfy       Any\n";
     }
 
