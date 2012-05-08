@@ -251,14 +251,15 @@
     $OUT .= "    AuthName      \"Git repository: $git_repository\.git (" . ($properties{'description'} || "ERROR - DESCRIPTION NOT CONFIGURED!"). ")\"\n";
     $OUT .= "    Require user  $effective_push_users $effective_pull_users\n\n";
 
-    $OUT .= "    # Network Access Control\n";
-    $OUT .= "    Order         Deny,Allow\n";
     if( $effective_pull_users ) {
-      # Authenticated pulls 
+      $OUT .= "    # Authenticated Pull/Push Access Control\n";
+      $OUT .= "    Order         Deny,Allow\n";
       $OUT .= "    Deny          from All\n";
       $OUT .= "    Allow         from $allow_from_network\n\n";
     } else { 
       # Anonymous pulls 
+      $OUT .= "    # Anonymous Pull / Authenticated Push Access Control\n";
+      $OUT .= "    Order         Deny,Allow\n";
       $OUT .= "    Deny          from env=AUTHORIZATION_REQUIRED\n";
 #      $OUT .= "    Allow         from All\n\n";
     }
