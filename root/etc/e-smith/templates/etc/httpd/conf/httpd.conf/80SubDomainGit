@@ -261,6 +261,9 @@
       }
     } else { 
       $OUT .= "\n    # Anonymous Pull / Authenticated Push Access Control\n";
+      if( $allow_from_network ne 'All' ) { 
+        $OUT .= "    # currently this still allows authenticated pull from outside the local network\n";
+      }
       $OUT .= "    Order         Allow,Deny\n";
       $OUT .= "    Allow         from $allow_from_network\n";
       $OUT .= "    Deny          from env=AUTHORIZATION_REQUIRED\n";
