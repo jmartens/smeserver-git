@@ -253,11 +253,23 @@
 
     $OUT .= "    # Network Access Control\n";
     $OUT .= "    Order         Deny,Allow\n";
-    $OUT .= "    Deny          from All\n";
-    $OUT .= "    Allow         from $allow_from_network\n\n";
+    if( $effective_pull_users ) {
+      # Authenticated pulls 
+      $OUT .= "    Deny          from All\n";
+      $OUT .= "    Allow         from $allow_from_network\n\n";
+    } else { 
+      # Anonymous pulls 
+      $OUT .= "    Deny          from env=AUTHORIZATION_REQUIRED\n";
+#      $OUT .= "    Allow         from All\n\n";
+    }
     
     $OUT .= "    # Need both Network AND User access rules\n";
-    $OUT .= "    Satisfy       All\n\n";
+    if( $effective_pull_users ) {
+      $OUT .= "    Satisfy       All\n\n";
+    } else { 
+      # Anonymous pulls 
+      $OUT .= "    Satisfy       Any\n\n";
+    }
 
     $OUT .= "  </Location> # $git_repository.git\n\n";
   }
