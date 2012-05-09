@@ -145,17 +145,35 @@
   $OUT .= "  SetEnv REMOTE_USER REDIRECT_REMOTE_USER\n\n"; 
 
   $OUT .= "  # If HTTP:Authorization was send in the request, ensure we make it\n";
-  $OUT .= "  # available in the HTTP_AUTHORIZATION environment variable.\n";
+  $OUT .= "  # available in the HTTP_AUTHORIZATION environment variable for use by gitweb.\n";
   $OUT .= "  RewriteEngine on\n";
   $OUT .= "  RewriteCond %\{HTTP:Authorization\} ^(.+)\n";
   $OUT .= "  RewriteRule .? - [e=HTTP_AUTHORIZATION:%1]\n\n";
   
+  $OUT .= "  # For access to git-receive-pack items (i.e. Git PUSH operations) rewrite the\n";
+  $OUT .= "  # URL to an internal virtual push directory that can be handled in a separate\n";
+  $OUT .= "  # Location directive where we handle the PUSH authorisation separately from the\n";
+  $OUT .= "  # PULL authorisation.\n";
+  $OUT .= "  RewriteCond %\{REQUEST_URI\}  !^/push/\n";
   $OUT .= "  RewriteCond %\{QUERY_STRING\} service=git-receive-pack [OR]\n";
   $OUT .= "  RewriteCond %\{REQUEST_URI\}  /git-receive-pack\$\n";
-  $OUT .= "  RewriteRule .? - [e=AUTHORIZATION_REQUIRED:yes]\n\n";
+  $OUT .= "  RewriteRule ^\(.*\)\$ /push%{REQUEST_URI} [PT]\n\n";
 
   $OUT .= "  # We use ScriptAliasMatch to match those URLs \n";
   $OUT .= "  # that git-http-backend can handle, and forward the rest to gitweb\n";
+  $OUT .= "  # In this first one we catch the push virtual directory and pass the URL without the\n";
+  $OUT .= "  # /push/ to git-http-backend\n";
+  $OUT .= "  ScriptAliasMatch \\\n";
+  $OUT .= "            \"\(\?x\)\^\/push\/\(\.\*/(HEAD \| \\\n";
+  $OUT .= "                        info/refs \| \\\n";
+  $OUT .= "                        objects/\(info/\[^/\]+ \| \\\n";
+  $OUT .= "                                 \[0-9a-f\]\{2\}/\[0-9a-f\]\{38\} \| \\\n";
+  $OUT .= "                                 pack/pack-\[0-9a-f\]\{40\}\\.\(pack|idx\)\) \| \\\n";
+  $OUT .= "                        git-\(upload\|receive\)-pack\)\)\$\" \\\n";
+  $OUT .= "            /usr/libexec/git-core/git-http-backend/\$1\n";
+  $OUT .= "\n";
+
+  $OUT .= "  # In this second we catch all the normal Git URLs for git-http-backend\n";
   $OUT .= "  ScriptAliasMatch \\\n";
   $OUT .= "            \"\(\?x\)\^\/\(\.\*/(HEAD \| \\\n";
   $OUT .= "                        info/refs \| \\\n";
@@ -242,35 +260,54 @@
     $OUT .= "  #  - Effective PULL Users: '" . ($effective_pull_users || "Anonymous") . "' <= (" . ($properties{'pull_groups'} || "none") . "/" . ($properties{'pull_users'}  || "none") . ")\n";
     $OUT .= "  #  - Effective PUSH Users: '" . ($effective_push_users || "Anonymous") . "' <= (" . ($properties{'push_groups'} || "none") . "/" . ($properties{'push_users'}  || "none") . ")\n";
 
-    $OUT .= "  <Location \"/$git_repository.git\">\n\n";
+    $OUT .= "  <Location \"/$git_repository.git\"> # for PULL access to $git_repository.git\n\n";
     $OUT .= "    SSLRequireSSL\n\n";
 
-    $OUT .= "    # User Access Control\n";
-    $OUT .= "    AuthType      Basic\n";
-    $OUT .= "    AuthExternal  pwauth\n";
-    $OUT .= "    AuthName      \"Git repository: $git_repository\.git (" . ($properties{'description'} || "ERROR - DESCRIPTION NOT CONFIGURED!"). ")\"\n";
-    $OUT .= "    Require user  $effective_push_users $effective_pull_users\n";
-
     if( $effective_pull_users ) {
-      if( $allow_from_network ne 'All' ) { 
-        $OUT .= "\n    # Authenticated Pull & Push Access Control\n";
-        $OUT .= "    Order         Deny,Allow\n";
-        $OUT .= "    Deny          from All\n";
-        $OUT .= "    Allow         from $allow_from_network\n";
-        $OUT .= "    Satisfy       All\n";
-      }
-    } else { 
-      $OUT .= "\n    # Anonymous Pull / Authenticated Push Access Control\n";
-      if( $allow_from_network ne 'All' ) { 
-        $OUT .= "    # currently this still allows authenticated pull from outside the local network\n";
-      }
-      $OUT .= "    Order         Allow,Deny\n";
+      $OUT .= "    # PULL Access Control\n";
+      $OUT .= "    AuthType      Basic\n";
+      $OUT .= "    AuthExternal  pwauth\n";
+      $OUT .= "    AuthName      \"Git repository: $git_repository\.git (" . ($properties{'description'} || "ERROR - DESCRIPTION NOT CONFIGURED!"). ")\"\n";
+      $OUT .= "    Require user  $effective_pull_users $effective_push_users\n";
+    } else {
+      $OUT .= "    # Anoymous Pull Access\n";
+    }
+    
+    if( $allow_from_network ne 'All' ) { 
+      $OUT .= "\n    # Restricted network access\n";
+      $OUT .= "    Order         Deny,Allow\n";
+      $OUT .= "    Deny          from All\n";
       $OUT .= "    Allow         from $allow_from_network\n";
-      $OUT .= "    Deny          from env=AUTHORIZATION_REQUIRED\n";
-      $OUT .= "    Satisfy       Any\n";
+      $OUT .= "    Satisfy       All\n";
+    } else {
+      $OUT .= "\n    # Internet access\n";
+    }
+    $OUT .= "\n  </Location> # $git_repository.git\n\n";
+
+    $OUT .= "  <Location \"/push/$git_repository.git\">  # for PUSH access to $git_repository.git\n\n";
+    $OUT .= "    SSLRequireSSL\n\n";
+
+    if( $effective_push_users ) {
+      $OUT .= "    # PUSH Access Control\n";
+      $OUT .= "    AuthType      Basic\n";
+      $OUT .= "    AuthExternal  pwauth\n";
+      $OUT .= "    AuthName      \"Git repository: $git_repository\.git (" . ($properties{'description'} || "ERROR - DESCRIPTION NOT CONFIGURED!"). ")\"\n";
+      $OUT .= "    Require user  $effective_push_users\n";
+    } else {
+      $OUT .= "    # Anoymous PUSH Access\n";
+    }
+    
+    if( $allow_from_network ne 'All' ) { 
+      $OUT .= "\n    # Restricted network access\n";
+      $OUT .= "    Order         Deny,Allow\n";
+      $OUT .= "    Deny          from All\n";
+      $OUT .= "    Allow         from $allow_from_network\n";
+      $OUT .= "    Satisfy       All\n";
+    } else {
+      $OUT .= "\n    # Internet access\n";
     }
 
-    $OUT .= "\n  </Location> # $git_repository.git\n\n";
-  }
+    $OUT .= "\n  </Location> # /push/$git_repository.git\n\n";
+    }
   $OUT .= "</VirtualHost>\n\n";
 }
