@@ -19,9 +19,9 @@
     <base>GIT_HOME_DESCRIPTION</base>
     <trans>
       <![CDATA[ 
-        <p>This panel allows creating and configuration of access permissions of centralised Git repositories on this server.</p>
-        <p>Configured Git repositories will only be available through HTTPS and also through the
-           web interface available at the "yourserver"/git URL.</p>
+        <p>This panel allows managing centralised Git repositories on this server.</p>
+        <p>Configured Git repositories be available through the git subdomain and via HTTPS like in https://git.thisserver.com/repositoruy.git.</p>
+        <p>The Git repositories can also be viewed through a web interface from the top of the git subdomain (i.e. https://git.thisserver.com).</p>
         <p>For more details and documentation on using Git, click on the Git logo on the left.</p>
       ]]>
     </trans>
@@ -34,7 +34,14 @@
   
   <entry>
 	  <base>GIT_REPOSITORY_LIST_DESCRIPTION</base>
-    <trans>You can remove any Git repository or modify its settings by clicking on the corresponding command next to the Git repository.</trans>
+    <trans>
+      <![CDATA[ 
+        <p>The table below lists the currently configured git repositories on this server.</p>
+        <p>The <b>bold</b> entries in the <b>Pull Access</b> and <b>Push Access</b> columns correspond to the 
+        user groups on this server. Non-bold entries are individual users.</p>
+        <p>You can modify the settings of a Git repository or remove a Git repository by clicking on the corresponding command in the <b>Action</b> column.</p>
+      ]]>
+    </trans>
   </entry>
 
   <entry>
