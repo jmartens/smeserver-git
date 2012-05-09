@@ -88,6 +88,15 @@ if ($event eq 'git-repository-create')
 
   system("/usr/bin/git", "config", "--add", "gitweb.owner", "Administrator") == 0
     or die "Could not change gitweb.owner setting in /home/e-smith/files/git/$gitRepositoryName.git";
+
+  system("/bin/ln", "-sf", "/usr/share/git-core/contrib/hooks/post-receive-email", "hooks/post-receive") == 0
+    or die "Could not link post-receive-email hook in /home/e-smith/files/git/$gitRepositoryName.git";
+    
+  system("/usr/bin/git", "config", "--add", "hooks.emailprefix", "[GIT] ") == 0
+    or die "Could not change hooks.emailprefix setting in /home/e-smith/files/git/$gitRepositoryName.git";
+    
+  system("/usr/bin/git", "config", "--add", "hooks.mailinglist", "marco") == 0
+    or die "Could not create hooks.mailinglist in /home/e-smith/files/git/$gitRepositoryName.git";
 }
 elsif ($event eq 'git-repository-modify')
 {
@@ -102,6 +111,10 @@ elsif ($event eq 'git-repository-modify')
   # Run git-update-server-info
   chdir "/home/e-smith/files/git/$gitRepositoryName.git"
     or die "Could not chdir to /home/e-smith/files/git/$gitRepositoryName.git";
+
+  system("/usr/bin/git", "config", "--replace-all", "hooks.mailinglist", "marco") == 0
+    or die "Could not update hooks.mailinglist in /home/e-smith/files/git/$gitRepositoryName.git";
+
   system("/usr/libexec/git-core/git-update-server-info") == 0
 	  or die "Error running 'update-server-info' on respository /home/e-smith/files/git/$gitRepositoryName.git";
 }
