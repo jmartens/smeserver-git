@@ -82,6 +82,12 @@ if ($event eq 'git-repository-create')
               "git update-server-info\n";
   close($file);
   chmod 0770, "/home/e-smith/files/git/$gitRepositoryName.git/hooks/post-update";
+  
+  chdir "/home/e-smith/files/git/$gitRepositoryName.git"
+    or die "Could not chdir to /home/e-smith/files/git/$gitRepositoryName.git";
+
+  system("/usr/bin/git", "config", "--add", "gitweb.owner", "Administrator") == 0
+    or die "Could not change gitweb.owner setting in /home/e-smith/files/git/$gitRepositoryName.git";
 }
 elsif ($event eq 'git-repository-modify')
 {
