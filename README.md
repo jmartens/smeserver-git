@@ -1,21 +1,20 @@
 Introduction
 ------------
+This package integrates Git into the SME server. It features:
 
-This package integrates git into the SME server. It features:
-
-* Create centralised git repositories through the server-manager
-* Access rights based on SME server users and groups
-* Access repositories through https://git.host/repo.git
-* Auto redirect from http to https for all access
-* Use git.host virtual server for the git repositories
-* Git repository names independent of ibays and other resources
-* Viewing of repositiries through gitweb
-* Support for gravatars enabled in gitweb
+* Create & manage centralised git repositories through the server-manager panel.
+* Access rights based on SME server users and groups.
+* Per repository settings for pull and push access control (including support for setting anonymous access).
+* Per repository network access setting for either local only or internet.
+* All repositories accessed over HTTPS for easy remote access through firewalls.
+* Separate name space for Git repositories using git subdomain (i.e. independent of ibays and other resources on the server)
+* Email notification of push operations to all users that have either pull or push access to the repository
+* Web viewing of repositories through gitweb
+* Gravatars support in gitweb
 * Automatic markdown of README.md into README.html and shown in gitweb
 
 Required Packages
 -----------------
-
 * git       - dag repository
 * gitweb    - dag repository
 * highlight - See http://www.andre-simon.de - Can be installed from the epel repositories
