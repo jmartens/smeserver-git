@@ -1,0 +1,13 @@
+TODO
+====
+* In the install script set  chmod a+x /usr/share/git-core/contrib/hooks/post-receive-email
+* Make the modify script create/update the mailing list for the receive hook.
+   git config --add hooks.mailinglist <userlist>
+   expand the <userlist> from the users that are configured for pull/push access
+* Put authorisation in the gitweb viewer so that non-anonymous pull repositories
+  are protected behind a login.
+* Modify the gitweb interface so that we have pretty URLs again 
+* Modify the gitweb interface so that we get a gitweb view when browsing to the 
+  repository we pop into the gitweb view
+* Create an installable rpm for the package.
+* Test install on a clean/bare SME8 server.  
