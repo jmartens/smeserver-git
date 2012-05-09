@@ -11,21 +11,14 @@ use NetAddr::IP;
 $export_auth_hook = sub \{
   my $projectdir = shift;
   
-  my $export_allowed = 0; # Must be 1 to show in gitweb.
-  my $local_request = 0;  # Will be 1 when the request is from the local network.
+  my $host_is_local           = 0; # Will be 1 when the host request is from the local network.
+  my $host_request_allowed    = 0; # Will be 1 when the view is allowed based on the current host address and 'allow_access_from' setting
+  my $anonymous_view_allowed  = 0; # Will be 1 when the repository does not require pull authorisation
+  my $authorised_view_allowed = 0; # Will be 1 when the authorised user has pull permissions on the repository 
 
   if($projectdir =~ (/(.*?)\.git/)) \{
     my $projectname = basename($1);
 
-    # Check if the request is from a local IP address for this host
-    my $networks_db = esmith::NetworksDB->open_ro() or
-      die "Could not open the networks database!\n";
-    my @network_setting = split(/[\/ ]/, $networks_db->local_access_spec('private'));
-    my $remote_addr = NetAddr::IP->new( $ENV\{'REMOTE_ADDR'\} );
-    if( $remote_addr->within( new NetAddr::IP @network_setting[1], @network_setting[2] ) ) \{
-      $local_request = 1;
-    \}
-    
     # Retrieve project properties from database
     my $git_db = esmith::GitDB->open_ro() or
       die "Could not open the Git repository database!\n";
@@ -33,6 +26,32 @@ $export_auth_hook = sub \{
       die "The git repository '$projectname' does not seem to exist in the Git repository database!\n";
     my %properties = $repository->props;  
 
+    # Check if the request is from a local IP address for this host
+    my $networks_db = esmith::NetworksDB->open_ro() or
+      die "Could not open the networks database!\n";
+    my @network_setting = split(/[\/ ]/, $networks_db->local_access_spec('private'));
+    my $remote_addr = NetAddr::IP->new( $ENV\{'REMOTE_ADDR'\} );
+    if( $remote_addr->within( new NetAddr::IP @network_setting[1], @network_setting[2] ) ) \{
+      $host_is_local = 1;
+    \}
+
+    # Check the configured network access permissions. 
+    if ($properties\{'allow_access_from'\}) \{
+      if ($properties\{'allow_access_from'\} eq 'internet') \{
+        $host_request_allowed = 1;
+      \} elsif (($properties\{'allow_access_from'\} eq 'local') && ($host_is_local))\{
+        $host_request_allowed = 1;
+      \} 
+    \}
+
+    # Check the configured access permissions for pull access
+    if( ($properties\{'pull_groups'\} eq '') && ($properties\{'pull_users'\} eq '') ) \{
+      $anonymous_view_allowed = 1;
+    \}
+
+    # Check if we have:
+    # a) a user that is listed in the repository pull or push permissions
+    # b) valid credentials i.e password can be validated.
     if( $ENV\{'HTTP_AUTHORIZATION'\} ) \{
       my @http_authorisation = split(/ /, $ENV\{'HTTP_AUTHORIZATION'\} );
       my @http_digest = split( /:/, decode_base64( @http_authorisation[1] ) );
@@ -40,17 +59,7 @@ $export_auth_hook = sub \{
         #die "User '@http_digest[0]' Password '@http_digest[1]' @network_setting[0]-@network_setting[1]-@network_setting[2] \n";
       \}
     \}
-    
-    # Check the configured access permissions. 
-    if ($properties\{'allow_access_from'\}) \{
-      if ($properties\{'allow_access_from'\} eq 'internet') \{
-        $export_allowed = 1;
-      \} elsif (($properties\{'allow_access_from'\} eq 'local') && ($local_request))\{
-        $export_allowed = 1;
-      \} else \{
-        $export_allowed = 0;
-      \}
-    \}
+
   \}
-  return $export_allowed;
+  return ($host_request_allowed && ($anonymous_view_allowed || $authorised_view_allowed));
 \};
