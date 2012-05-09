@@ -128,7 +128,11 @@ characters.</trans>
   <entry>
     <base>GIT_PRIVILEGES_NOTE</base>
     <trans>
-      <![CDATA[ <p> Use the selection boxes below to you configure the pull and push permissions for the Git repository.<br />Select either groups or individual users. Press the SHIFT key to select multiple groups or users.<br />If you set neither group nor user setting for a access permissions, the access permissions will default to anonymous access.<br />The only exception is when you have specified pull access permissions (either for user(s), group(s) or both), there will be no anonymous push access.<br />If you want your user(s) or group(s) to have exclusive full pull and push access specify them in both the pull and push box. </p> ]]>
+      <![CDATA[ <p> Use the selection boxes below to you configure the pull and push permissions for the Git repository.<br />
+      Select either groups or individual users. Press the SHIFT key to select multiple groups or users.<br />
+      If you set neither a group or user setting, the repositoty will be accessible anonymously (i.e. no user name or password will be required).<br />
+      If you specify users or groups for pull permissions, the push users will also have pull access.<br />
+      If you want your user(s) or group(s) to have exclusive full pull and push access specify them in both the pull and push box.</p> ]]>
     </trans>
   </entry>
   
