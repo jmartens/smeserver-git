@@ -21,9 +21,6 @@
   # - Global:  gitweb view from the Internet and the local network with public repositories
   #            repository read from the Internet and the local network
   #            repository write from the Internet but authenticated with HTTPS
-  # - Private: gitweb unauthenticated view from the local network with all repositires
-  #            gitweb authenticated / HTTPS view from the internet 
-  #            repository write allowed from the Internet but authenticated with HTTPS
   # - Local:   accessible only from the local network (incl. gitweb)
   # 
   # Copyright (C) 2012 Marco Hess <marco.hess@through-ip.com>

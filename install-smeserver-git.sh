@@ -20,6 +20,7 @@ cmp -s root/usr/lib/perl5/site_perl/esmith/GitDB.pm /usr/lib/perl5/site_perl/esm
 if [ $? -ne 0 ]
 then
   echo "Installing Git repository database library ..."
+  touch     /home/e-smith/db/git
   cp -f     root/usr/lib/perl5/site_perl/esmith/GitDB.pm /usr/lib/perl5/site_perl/esmith
   chown  -R root:admin /usr/lib/perl5/site_perl/esmith/GitDB.pm
   chmod  644           /usr/lib/perl5/site_perl/esmith/GitDB.pm
@@ -49,6 +50,10 @@ then
   chown  -R root:admin /etc/e-smith/web/functions/git
   chmod  755           /etc/e-smith/web/functions/git
   chmod  u+s           /etc/e-smith/web/functions/git
+  pushd .
+  cd /etc/e-smith/web/panels/manager/cgi-bin
+  ln -sf ../../../functions/git git
+  popd
   REGENERATE_PANEL=1
 fi
 
@@ -131,3 +136,14 @@ then
     less -N /etc/httpd/conf/httpd.conf
   fi
 fi
+
+echo "-----------------------------------------------------------------------------------------------------"
+echo "smeserver-git contrib installed."
+echo "Ensure you configure the domain correctly with:"
+echo " "
+echo "  config setprop git domain git.yourdomain.tld"
+echo "  expand-template /etc/httpd/conf/httpd.conf"
+echo "  expand-template /etc/gitweb.conf"
+echo " "
+echo "-----------------------------------------------------------------------------------------------------"
+

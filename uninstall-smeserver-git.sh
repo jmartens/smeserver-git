@@ -11,8 +11,10 @@ rm -f /etc/e-smith/events/actions/git*
 
 echo "Removing server manager FormMagick handler ..."
 rm -f /etc/e-smith/web/functions/git 
+rm -f /etc/e-smith/web/panels/manager/cgi-bin/git
 rm -f /etc/e-smith/locale/en-us/etc/e-smith/web/functions/git 
 rm -f /usr/lib/perl5/site_perl/esmith/FormMagick/Panel/git.pm 
+rm -f /etc/e-smith/web/panels/manager/cgi-bin/git
 
 echo "Updating server-manager panel ..."
 /etc/e-smith/events/actions/navigation-conf
