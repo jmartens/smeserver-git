@@ -7,7 +7,7 @@ echo "Removing GitDB handler ..."
 rm -f /usr/lib/perl5/site_perl/esmith/GitDB.pm 
 
 echo "Removing server manager action scripts ..."
-rm -f /etc/e-smith/events/actions/git* /etc/e-smith/events/actions
+rm -f /etc/e-smith/events/actions/git* 
 
 echo "Removing server manager FormMagick handler ..."
 rm -f /etc/e-smith/web/functions/git 
@@ -30,7 +30,7 @@ echo "Removing gitweb.conf template fragments ..."
 rm -rf /etc/e-smith/templates/etc/gitweb.conf
 
 echo "Removing gitweb home text template fragments ..."
-rm -f  /etc/e-smith/templates/etc/e-smith/web/common/gitweb_home_text.html
+rm -rf  /etc/e-smith/templates/etc/e-smith/web/common/gitweb_home_text.html
 rm -f  /etc/e-smith/web/common/gitweb_home_text.html
 
 echo "Removing HTTP template ..."
@@ -38,8 +38,12 @@ rm -f  /etc/e-smith/templates/etc/httpd/conf/httpd.conf/80SubDomainGit
 expand-template /etc/httpd/conf/httpd.conf
 /etc/init.d/httpd-e-smith restart
 
-echo "smeserver-git contrib has been removed, but the databases and git repositories have been left intact.\n"
+echo "-----------------------------------------------------------------------------------------------------"
+echo "smeserver-git contrib has been removed, but the databases and git repositories have been left intact."
 echo "To completely remove everything, use the following commands:"
-echo "config delete git"
-echo "rm -f  /home/e-smith/db/git"
-echo "rm -rf /home/e-smith/files/git"
+echo " "
+echo "  config delete git"
+echo "  rm -f  /home/e-smith/db/git"
+echo "  rm -rf /home/e-smith/files/git"
+echo " "
+echo "-----------------------------------------------------------------------------------------------------"
