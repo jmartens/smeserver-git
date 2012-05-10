@@ -3,6 +3,14 @@
 # Install a export authorisation hook to ensure Gitweb only list thise projects that the user
 # is authorised to see.
 
+#                               local_unauthorised internet_unauthorised local_authorised internet_authorised
+# internet anonymous pull                Yes                Yes                Yes               
+# local    anonymous pull                Yes                No                 Yes
+# internet && authorised pull            Yes                No                 Yes
+# local    && authorised pull            Yes                No                 Yes
+
+
+
 use esmith::NetworksDB;
 use esmith::GitDB;
 use MIME::Base64;
@@ -10,11 +18,13 @@ use NetAddr::IP;
 
 $export_auth_hook = sub \{
   my $projectdir = shift;
-  
+
+  my $repository_view_allowed = 0;  
+  my $internet_access_allowed = 0;
   my $host_is_local           = 0; # Will be 1 when the host request is from the local network.
   my $host_request_allowed    = 0; # Will be 1 when the view is allowed based on the current host address and 'allow_access_from' setting
-  my $anonymous_view_allowed  = 0; # Will be 1 when the repository does not require pull authorisation
-  my $authorised_view_allowed = 0; # Will be 1 when the authorised user has pull permissions on the repository 
+  my $anonymous_pull          = 0; # Will be 1 when the repository does not require pull authorisation
+  my $authorised_repository_view_allowed = 0; # Will be 1 when the authorised user has pull permissions on the repository 
 
   if($projectdir =~ (/(.*?)\.git/)) \{
     my $projectname = basename($1);
@@ -38,15 +48,13 @@ $export_auth_hook = sub \{
     # Check the configured network access permissions. 
     if ($properties\{'allow_access_from'\}) \{
       if ($properties\{'allow_access_from'\} eq 'internet') \{
-        $host_request_allowed = 1;
-      \} elsif (($properties\{'allow_access_from'\} eq 'local') && ($host_is_local))\{
-        $host_request_allowed = 1;
-      \} 
+        $internet_access_allowed = 1;
+      \}
     \}
 
     # Check the configured access permissions for pull access
     if( ($properties\{'pull_groups'\} eq '') && ($properties\{'pull_users'\} eq '') ) \{
-      $anonymous_view_allowed = 1;
+      $anonymous_pull = 1;
     \}
 
     # Check if we have:
@@ -61,5 +69,13 @@ $export_auth_hook = sub \{
     \}
 
   \}
-  return ($host_request_allowed && ($anonymous_view_allowed || $authorised_view_allowed));
+
+  # local host are allowed to see all repositories
+  if( $host_is_local ) \{
+     $repository_view_allowed = 1;
+  \} elsif( $internet_access_allowed && $anonymous_pull ) \{
+     $repository_view_allowed = 1; 
+  \};
+  
+  return ( $repository_view_allowed );
 \};
