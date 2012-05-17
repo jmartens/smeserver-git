@@ -84,16 +84,21 @@ sub AUTOLOAD {
 }
 
 sub effective_users_list_from {
-  my($class,$groups, $users) = @_;
+  my($class,$groups1, $users1,$groups2, $users2) = @_;
 
   ### Generate effective list of users from the groups and individual users combined ### 
   my @effective_users_list;
-  my $effective_users_list;
 
   ### Collect users listed for the named groups
-  if ($groups) {
+  if( $groups1 || $groups2 ) {
+    my @groups;
+    if( $groups1 ) {
+      push @groups, split ( /,/, $groups1 );
+    }
+    if( $groups2 ) {
+      push @groups, split ( /,/, $groups2 );
+    }
     my $accounts_db = esmith::AccountsDB->open;
-    my @groups = split (/,/, $groups);
     foreach my $group (@groups) {
       my $record = $accounts_db->get($group);
       if ($record) {
@@ -107,20 +112,25 @@ sub effective_users_list_from {
   }
     
   ### Combine individual users into the list generated so far
-  if ($users) {
-    push @effective_users_list, split (/,/, $users);
+  if( $users1 ) {
+    push @effective_users_list, split ( /,/, $users1 );
+  }
+  if( $users2 ) {
+    push @effective_users_list, split ( /,/, $users2 );
   }
 
   ### When there is more than one entry, sort it
-  if (@effective_users_list > 1) {
+  if( @effective_users_list > 1 ) {
     @effective_users_list = sort(@effective_users_list);
   }
 
   ### Ensure we only have unique entries
+  my $effective_users_list;
   my $prev = '';
-  @effective_users_list = grep($_ ne $prev && (($prev) = $_), @effective_users_list);
-  $effective_users_list = join(" ", @effective_users_list) || '';
+  @effective_users_list = grep( $_ ne $prev && (($prev) = $_), @effective_users_list );
+  $effective_users_list = join( " ", @effective_users_list ) || '';
   undef @effective_users_list;
 
   return $effective_users_list;
 }
+

@@ -248,7 +248,13 @@
     # Determine the effective users list from the listed groups and individual users
     my $effective_push_users = $git_db->effective_users_list_from( $properties{'push_groups'}, 
                                                                    $properties{'push_users'} ); 
+                                                                   
     my $effective_pull_users = $git_db->effective_users_list_from( $properties{'pull_groups'},  
+                                                                   $properties{'pull_users'} ); 
+                                                                   
+    my $effective_pull_push_users = $git_db->effective_users_list_from( $properties{'push_groups'}, 
+                                                                   $properties{'push_users'},
+                                                                   $properties{'pull_groups'},  
                                                                    $properties{'pull_users'} ); 
 
     $OUT .= "  # ~~~~~~~~~~~~~~~~~~~~~~~~\n";
@@ -256,6 +262,7 @@
     $OUT .= "  #  - Allow access from   : " . ($properties{'allow_access_from'} || "ERROR - ALLOW_ACCESS_FROM NOT CONFIGURED!") . " => Network allow from $allow_from_network\n";
     $OUT .= "  #  - Effective PULL Users: '" . ($effective_pull_users || "Anonymous") . "' <= (" . ($properties{'pull_groups'} || "none") . "/" . ($properties{'pull_users'}  || "none") . ")\n";
     $OUT .= "  #  - Effective PUSH Users: '" . ($effective_push_users || "Anonymous") . "' <= (" . ($properties{'push_groups'} || "none") . "/" . ($properties{'push_users'}  || "none") . ")\n";
+    $OUT .= "  #  - Effective PULL/PUSH : '" . ($effective_pull_push_users || "Anonymous") . "'\n";
 
     $OUT .= "  <Location \"/$git_repository.git\"> # for PULL access to $git_repository.git\n\n";
     $OUT .= "    SSLRequireSSL\n\n";
@@ -265,7 +272,7 @@
       $OUT .= "    AuthType      Basic\n";
       $OUT .= "    AuthExternal  pwauth\n";
       $OUT .= "    AuthName      \"Git repository: $git_repository\.git (" . ($properties{'description'} || "ERROR - DESCRIPTION NOT CONFIGURED!"). ")\"\n";
-      $OUT .= "    Require user  $effective_pull_users $effective_push_users\n";
+      $OUT .= "    Require user  $effective_pull_push_users\n";
     } else {
       $OUT .= "    # Anoymous Pull Access\n";
     }

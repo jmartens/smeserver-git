@@ -50,11 +50,19 @@ die "'$gitRepositoryName' is not an Git repository; git-repository-modify event 
   
 my %properties  = $repository->props;  
 my $description = $properties{'description'};  
-my $effective_push_users = $git_db->effective_users_list_from( $properties{'push_groups'}, 
-                                                               $properties{'push_users'} ); 
+
+
 my $effective_pull_users = $git_db->effective_users_list_from( $properties{'pull_groups'},  
                                                                $properties{'pull_users'} ); 
- 
+                                                               
+my $effective_push_users = $git_db->effective_users_list_from( $properties{'push_groups'}, 
+                                                               $properties{'push_users'} ); 
+                                                               
+my $effective_pull_push_users  = $git_db->effective_users_list_from( $properties{'push_groups'}, 
+                                                               $properties{'push_users'}, 
+                                                               $properties{'pull_groups'},  
+                                                               $properties{'pull_users'} );
+                                                               
 if ($event eq 'git-repository-create')
 {
   #------------------------------------------------------------
@@ -100,7 +108,7 @@ if ($event eq 'git-repository-create')
   system("/usr/bin/git", "config", "--add", "hooks.emailprefix", "[GIT] ") == 0
     or die "Could not change hooks.emailprefix setting in /home/e-smith/files/git/$gitRepositoryName.git";
     
-  system("/usr/bin/git", "config", "--add", "hooks.mailinglist", $effective_pull_users . " " . $effective_push_users ) == 0
+  system("/usr/bin/git", "config", "--add", "hooks.mailinglist", $effective_pull_push_users ) == 0
     or die "Could not create hooks.mailinglist in /home/e-smith/files/git/$gitRepositoryName.git";
 }
 elsif ($event eq 'git-repository-modify')
@@ -117,7 +125,7 @@ elsif ($event eq 'git-repository-modify')
   chdir "/home/e-smith/files/git/$gitRepositoryName.git"
     or die "Could not chdir to /home/e-smith/files/git/$gitRepositoryName.git";
 
-  system("/usr/bin/git", "config", "--replace-all", "hooks.mailinglist", $effective_pull_users . " " . $effective_push_users ) == 0
+  system("/usr/bin/git", "config", "--replace-all", "hooks.mailinglist", $effective_pull_push_users ) == 0
     or die "Could not update hooks.mailinglist in /home/e-smith/files/git/$gitRepositoryName.git";
 
   system("/usr/libexec/git-core/git-update-server-info") == 0
