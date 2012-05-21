@@ -97,7 +97,7 @@ then
 fi
 
 echo "Installing Gitweb resources ..."
-rm -f      /etc/e-smith/web/common/git*
+rm -rf     /etc/e-smith/web/common/git*
 cp -r  root/etc/e-smith/web/common/git* /etc/e-smith/web/common
 chown  -R root:root /etc/e-smith/web/common/git*
 chmod  444          /etc/e-smith/web/common/git*
