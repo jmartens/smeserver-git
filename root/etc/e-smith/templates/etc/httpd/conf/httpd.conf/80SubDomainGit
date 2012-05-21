@@ -182,8 +182,9 @@
   $OUT .= "\n";
   
   $OUT .= "  # Serve HTML with gitweb. Use Alias to allow serving required CSS and JS files.\n";
-#    $OUT .= "  Alias  /gitweb/static   /etc/e-smith/web/common\n";
-  $OUT .= "  Alias  /gitweb          /usr/share/gitweb\n\n";
+  $OUT .= "  Alias  /gitweb              /usr/share/gitweb\n\n";
+  $OUT .= "  Alias  /static/gitweb.css   /etc/e-smith/web/common/gitweb/gitweb.css\n";
+  $OUT .= "  Alias  /static/gitweb.js    /etc/e-smith/web/common/gitweb/gitweb.js\n";
 
 #  $OUT .= "  # Ensure we can browse the repo with http://git.server.com/repo.git\n";
 #  $OUT .= "  # instead of http://git.server.com/?p=repo.git;a=summary.\n";
@@ -206,8 +207,7 @@
   $OUT .= "    Allow from     $gitweb_allow\n";
   $OUT .= "  </Directory>\n\n";
 
-  $OUT .= "  <Directory /etc/e-smith/web/common>\n";
-  $OUT .= "    Options        ExecCGI\n";
+  $OUT .= "  <Directory /etc/e-smith/web/common/gitweb>\n";
   $OUT .= "    AllowOverride  None\n";
   $OUT .= "    Order          Allow,Deny\n";
   $OUT .= "    Allow from     $gitweb_allow\n";
