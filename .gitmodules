@@ -1,0 +1,3 @@
+[submodule "root/etc/e-smith/web/common/gitweb"]
+	path = root/etc/e-smith/web/common/gitweb
+	url = https://MarcoHess@github.com/MarcoHess/gitweb-theme.git
