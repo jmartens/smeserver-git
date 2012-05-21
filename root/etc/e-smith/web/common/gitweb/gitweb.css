@@ -1,4 +1,4 @@
-f/* Reset
+/* Reset
 ------------------------------------------------------------------------- */
 
 /* Based on http://meyerweb.com/eric/tools/css/reset/ */
@@ -45,12 +45,16 @@ a { outline: none; }
 ---------------------------------------------------------------------------- */
 
 body {
-  font-family: "Monaco", "Courier New", monospace;
-  font-size: 12px;
-  line-height: 1.5;
+  font: 13px Helvetica,arial,freesans,clean,sans-serif;
+  line-height: 1.4;
   margin: 0;
   background-color: #fff;
   color: #000000;
+}
+
+/* Monospaced Fonts */
+.sha1, .mode, .diff_tree .list, .pre, .diff, .patchset {
+  font-family: 'Consolas','Bitstream Vera Sans Mono',monospace;
 }
 
 a:link, a:visited {
@@ -86,8 +90,15 @@ td, th {
   padding: 5px;
 }
 
-.page_nav br {
-  display: none;
+.page_nav > br {
+  display: block;
+} 
+
+/* Avatar
+---------------------------------------------------------------------------- */
+
+img.avatar {
+  vertical-align: top;
 }
 
 /* Page Header
@@ -95,7 +106,7 @@ td, th {
 
 .page_header {
   height: 55px;
-  line-height: 50px;
+  line-height: 55px;
   position: relative;
   padding: 0 27px;
   margin-bottom: 20px;
@@ -129,6 +140,7 @@ td, th {
 .page_header img.logo {
   display: none;
 }
+
 
 /* Page Footer
 ---------------------------------------------------------------------------- */
@@ -176,6 +188,7 @@ a.rss_logo:hover {
 ---------------------------------------------------------------------------- */
 
 .project_list,
+.readme,
 .shortlog,
 .tree,
 .commit_search,
@@ -194,6 +207,14 @@ a.rss_logo:hover {
 .commit_search th {
   color: #afafaf;
   font-weight: normal;
+}
+
+div.readme {
+  padding: 5px;
+}
+
+.project_list th {
+  font-weight: bold;
 }
 
 .project_list tr,
@@ -225,6 +246,7 @@ th .header {
   background: transparent;
   border: 0;
   padding: 0;
+  font-weight: bold;
 }
 
 .tree {
@@ -235,7 +257,7 @@ th .header {
 .projsearch {
   position: absolute;
   right: 4%;
-  top: 15px;
+  top: 9px;
 }
 
 .commit_search {
@@ -254,22 +276,26 @@ th .header {
   margin: 0 auto 15px auto;
 }
 
+.list_head {
+  display:none;
+}
+
 .history {
   background: #eaeaea;
 }
 
-.title {
-  width: 95%;
-  padding: 5px;
-  font-weight: bold;
-  margin: 0 auto 15px auto;
+body > .title {
+  display:none;
 }
 
-.readme {
-  width: 95%;
+body > .title ~ .title {
+  display: block;
+  width: 94%;
+  background: #eaf2f5;
+  border: 1px solid #bedce7;
+  font-weight: bold;
   padding: 5px;
   margin: 0 auto 15px auto;
-  background: #f0f0f0;
 }
 
 .projects_list,
@@ -399,8 +425,43 @@ span.refs a {
 .rem {
   background: #ffdddd;
 }
+
 .add {
   background: #ddffdd;
+}
+
+/* side-by-side diff
+---------------------------------------------------------------------------- */
+
+div.chunk_block {
+  overflow: hidden;
+}
+
+div.chunk_block div.old {
+  float: left;
+  width: 50%;
+  overflow: hidden;
+}
+
+div.chunk_block div.new {
+  margin-left: 50%;
+  width: 50%;
+}
+
+div.chunk_block.rem div.old div.diff.rem {
+  background-color: #ffdddd;
+}
+
+div.chunk_block.add div.new div.diff.add {
+  background-color: #ddffdd;
+}
+
+/*div.chunk_block.chg div     div.diff {
+  background-color: #fffff0;
+}*/
+
+div.chunk_block.ctx div     div.diff.ctx {
+  color: #505050;
 }
 
 /* Age
