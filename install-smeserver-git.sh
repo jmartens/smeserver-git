@@ -98,9 +98,13 @@ fi
 
 echo "Installing Gitweb resources ..."
 rm -rf     /etc/e-smith/web/common/git*
-cp -r  root/etc/e-smith/web/common/git* /etc/e-smith/web/common
+cp     root/etc/e-smith/web/common/git-*.png /etc/e-smith/web/common
+mkdir      /etc/e-smith/web/common/gitweb
+cp     root/etc/e-smith/web/common/gitweb/git* /etc/e-smith/web/common/gitweb
 chown  -R root:root /etc/e-smith/web/common/git*
-chmod  444          /etc/e-smith/web/common/git*
+chmod  444          /etc/e-smith/web/common/git-*.png
+chmod  555          /etc/e-smith/web/common/gitweb/
+chmod  444          /etc/e-smith/web/common/gitweb/*
 
 # Gitweb Config
 echo "Installing Gitweb.conf template fragments ..."
