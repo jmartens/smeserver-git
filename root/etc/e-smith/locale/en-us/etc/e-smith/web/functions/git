@@ -52,10 +52,10 @@
   <entry>
   	<base>GIT_NAME_FIELD_DESC</base>
 	  <trans>The Git repository name should contain only 
-lower-case letters, numbers, periods, hyphens and underscores, and 
-should start with a lower-case letter. For example "johnson", 
-"intra", and "cust3.prj12" are all valid names, but "3associates", 
-"John Smith" and "Bus!Partner" are not. The name is limited to {$maxLength} 
+upper or lower-case letters, numbers, periods, hyphens and underscores, and 
+should start with a letter. For example "johnson", 
+"Intra", and "cust3.prj12" are all valid names, but "3associates", 
+and "Bus!Partner" are not. The name is limited to {$maxLength} 
 characters.</trans>
   </entry>
 

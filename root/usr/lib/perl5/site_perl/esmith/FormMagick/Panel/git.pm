@@ -645,7 +645,7 @@ sub getExtraParams
 
 sub git_repository_validate_name {
   my( $self, $repositoryName ) = @_;
-  unless ($repositoryName =~ /^([a-z][\_\-a-z0-9]*)$/)
+  unless ($repositoryName =~ /^([A-Za-z][\_\-A-Za-z0-9]*)$/)
   {
     return $self->localise('GIT_ERROR_NAME_HAS_INVALID_CHARS',
                            {repositoryName => $repositoryName});
