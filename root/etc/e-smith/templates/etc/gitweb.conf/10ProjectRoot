@@ -1,8 +1,0 @@
-
-# Set the path to git projects.  This is an absolute filesystem path which will
-# be prepended to the project path. The use of the environment variable
-# GITWEB_PROJECTROOT allows the webserver to redirect the Gitweb view
-# to user home directories that may be used to keep personal Git
-# repositories.
-
-our $projectroot = $ENV\{'GITWEB_PROJECTROOT'\} || "/home/e-smith/files/git";

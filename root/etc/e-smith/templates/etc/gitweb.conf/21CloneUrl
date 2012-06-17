@@ -1,5 +1,0 @@
-{
- $OUT  = "";
- $OUT .= "# Set the list of git base URLs to fetch project from\n";
- $OUT .= "\@git_base_url_list = \"https://" . $git{'domain'} . "\"\;\n\n";
-}

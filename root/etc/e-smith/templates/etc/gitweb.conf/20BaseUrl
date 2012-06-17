@@ -1,4 +1,0 @@
-{
- $OUT  = "";
- $OUT .= "\$base_url = \"https://" . $git{'domain'} . "/\"\;\n\n";
-}
