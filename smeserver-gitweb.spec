@@ -1,4 +1,4 @@
-%define name smeserver-git
+%define name smeserver-gitweb
 %define version 1.0.0
 %define release 1
 Summary: smeserver-git provides integration for centralised git respositories on an smeserver
@@ -9,8 +9,7 @@ Distribution: SME Server
 License: GNU GPL version 2
 URL: http://www.through-ip.com
 Group: SMEserver/addon
-#wget http://www.fooweb.com/downloads/foo-3.6.431.tar.gz
-Source: smeserver-git-1.0.0.tar.gz
+Source: smeserver-gitweb-1.0.0.tar.gz
 Packager: Marco Hess <marco.hess@through-ip.com>
 BuildArchitectures: noarch
 BuildRoot: /var/tmp/%{name}-%{version}
@@ -19,12 +18,6 @@ Requires: e-smith-release >= 8.0
 AutoReqProv: no
 
 %description
-smeserver-git enables centralised git repositories on an SME server and enables 
-access to these repositories through HTTP/HTTPS. Repositories are created and
-managed through a server-manager panel that also configures the access permissions
-to the repositories based on the existing SME users and groups. The package
-installes and enables a virtual server 'git' on the current host like in
-git.host.com. Repositories are then available as https://git.host.com/gitrepo.git.
 HTTP access to https://git.host.com provides a gitweb view of the repositories.
 
 %changelog
@@ -45,14 +38,6 @@ rm -f %{name}-%{version}-filelist
 
 %clean
 rm -rf $RPM_BUILD_ROOT
-
-%post
-/sbin/e-smith/expand-template /etc/httpd/conf/httpd.conf
-true
-
-%postun
-/sbin/e-smith/expand-template /etc/httpd/conf/httpd.conf
-true
 
 %files -f %{name}-%{version}-filelist
 %defattr(-,root,root)
