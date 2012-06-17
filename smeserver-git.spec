@@ -15,6 +15,7 @@ BuildArchitectures: noarch
 BuildRoot: /var/tmp/%{name}-%{version}
 BuildRequires: e-smith-devtools
 Requires: e-smith-release >= 8.0
+Requires: git
 AutoReqProv: no
 
 %description
