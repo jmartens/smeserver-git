@@ -83,5 +83,4 @@ for my $event (qw(
 
 ###############################################################################
 
-safe_symlink("../../../functions/git", "root/etc/e-smith/web/panels/manager/cgi-bin/git");
-
+panel_link('git', 'manager');
