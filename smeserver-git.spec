@@ -35,6 +35,7 @@ git.host.com. Repositories are then available as https://git.host.com/gitrepo.gi
 
 %prep
 %setup
+mkdir -p root/home/e-smith/files/git/
 
 %build
 perl createlinks
