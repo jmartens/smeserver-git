@@ -1,0 +1,86 @@
+#!/usr/bin/perl -w
+
+use esmith::Build::CreateLinks qw(:all);
+use File::Basename;
+
+###############################################################################
+
+for my $event (qw(
+  git-repository-create
+  git-repository-modify
+  git-modify
+  git-delete
+  user-delete
+  group-delete
+  group-modify
+  ))
+{
+  event_link("git-delete-user-or-group-from-access-list", $event, "05");
+  safe_symlink("sigusr1", "root/etc/e-smith/events/$event/services2adjust/httpd-e-smith");
+  templates2events("/etc/httpd/conf/httpd.conf", $event)
+}
+
+###############################################################################
+
+for my $event (qw( git-repository-create 
+                   git-repository-modify ))
+{
+  event_link("git-repository-create-modify", $event, "05");
+  safe_symlink("sigusr1", "root/etc/e-smith/events/$event/services2adjust/httpd-e-smith");
+  templates2events("/etc/httpd/conf/httpd.conf", $event)
+}
+
+###############################################################################
+
+for my $event (qw( git-repository-delete ))
+{
+  event_link("git-repository-delete", $event, "05");
+  safe_symlink("sigusr1", "root/etc/e-smith/events/$event/services2adjust/httpd-e-smith");
+  templates2events("/etc/httpd/conf/httpd.conf", $event)
+}
+
+###############################################################################
+
+for my $event (qw( git-repository-create
+                   git-repository-modify
+                   git-repository-delete
+                   git-modify
+                   git-delete
+                   user-delete
+                   group-delete
+                   group-modify ))
+{
+  safe_symlink("sigusr1", "root/etc/e-smith/events/$event/services2adjust/httpd-e-smith");
+  templates2events("/etc/httpd/conf/httpd.conf", $event)
+}
+
+###############################################################################
+
+for my $event (qw( user-delete 
+                   group-delete
+                   group-modify ))
+{
+  event_link("git-delete-user-or-group-from-access-list", $event, "05");
+  safe_symlink("sigusr1", "root/etc/e-smith/events/$event/services2adjust/httpd-e-smith");
+  templates2events("/etc/httpd/conf/httpd.conf", $event)
+}
+
+for my $event (qw(
+  git-repository-modify
+  git-repository-create
+  ))
+{
+  event_link("git-repository-create-modify", $event, "05");
+}
+
+for my $event (qw(
+  git-project-delete
+  git-delete
+  ))
+{
+  event_link($event, $event, "05");
+}
+
+###############################################################################
+
+panel_link('git', 'manager');

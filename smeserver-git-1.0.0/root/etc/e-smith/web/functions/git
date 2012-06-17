@@ -1,0 +1,125 @@
+#!/usr/bin/perl -wT
+
+# vim: ft=perl ts=2 sw=2 et:
+#----------------------------------------------------------------------
+# heading     : Collaboration
+# description : GIT_NAVIGATION_DESCRIPTION
+# navigation  : 2499 2599
+#
+# Copyright (C) 2012 - Marco Hess <marco.hess@through-ip.com>
+#
+# This file is part of the "Git Repositories" panel in the
+# SME Server server-manager panel to configure git repositories.
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
+#----------------------------------------------------------------------
+
+use strict;
+use warnings;
+use esmith::FormMagick::Panel::git;
+
+my $fm = esmith::FormMagick::Panel::git->new();
+$fm->display();
+
+__DATA__
+<form
+  title="GIT_FORM_TITLE"
+  header="/etc/e-smith/web/common/head.tmpl"
+  footer="/etc/e-smith/web/common/foot.tmpl">
+
+  <!-- page 0 -->
+  <page 
+    name="First"
+    pre-event="print_status_message()" >
+
+    <subroutine src="git_print_home_description()" />
+    
+    <subroutine src="git_repository_print_add_button()" />
+    
+    <subroutine src="git_repository_print_table()" />
+  </page>
+
+    <!-- page 1 -->
+  <page name="GitCreateModify" 
+	  pre-event="turn_off_buttons()" 
+	  post-event="git_repository_handle_create_or_modify()">
+   
+    <subroutine src="git_repository_print_name_field()" />
+    
+    <field 
+      type="text" 
+      id="description"
+      validation="git_repository_validate_description">
+      <label>DESCRIPTION</label>
+    </field>
+
+    <field 
+      type="radio" 
+      id="allow_access_from" 
+      options="'local', 'internet'"
+      validation="validate_radio">
+      <label>GIT_LABEL_ALLOW_ACCESS_FROM</label>
+    </field>
+
+    <subroutine src="print_privileges()" />
+
+    <field 
+      type="select" 
+      id="pull_groups" 
+      options="git_repository_group_list()" 
+      multiple="1" size="5">
+      <label>GIT_PRIVILEGES_GROUPS_PULL</label>
+    </field>
+
+    <field 
+      type="select" 
+      id="pull_users" 
+      options="git_repository_user_list()" 
+      multiple="1" size="5">
+      <label>GIT_PRIVILEGES_USERS_PULL</label>
+    </field>
+    
+    <field 
+      type="select" 
+      id="push_groups" 
+      options="git_repository_group_list()" 
+      multiple="1" size="5">
+      <label>GIT_PRIVILEGES_GROUPS_PUSH</label>
+    </field>
+    
+    <field 
+      type="select" 
+      id="push_users" 
+      options="git_repository_user_list()" 
+      multiple="1" size="5">
+      <label>GIT_PRIVILEGES_USERS_PUSH</label>
+    </field>
+
+    <subroutine src="git_repository_print_save_or_add_button()" />
+  </page>
+
+  <!-- page 2 -->
+  <page 
+    name="GitRemove" 
+    pre-event="turn_off_buttons()" 
+    post-event="git_repository_handle_remove()">
+        
+    <title>GIT_REMOVE_TITLE</title>
+    <description>GIT_REMOVE_DESCRIPTION</description>
+    
+    <subroutine src="print_button('GIT_REMOVE_BUTTON')" />
+  </page>
+
+</form>
